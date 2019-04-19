@@ -9,7 +9,7 @@ const mail = require('../service-utils/mail');
 const adduser = express.Router();
 
 // Endpoint: /adduser
-adduser.post('/', function (req, res) {
+adduser.post('/', async function (req, res) {
     console.log('POST on adduser');
     const username = req.body.username;
     const email = req.body.email;
