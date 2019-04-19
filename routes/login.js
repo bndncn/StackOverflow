@@ -1,5 +1,15 @@
 const express = require('express');
+const CryptoJS = require("crypto-js");
+const utils = require('../utils/service-utils');
+
 const login = express.Router();
+
+function validPassword(password, hash, key) {
+    const bytes = CryptoJS.AES.decrypt(hash, key);
+    const decryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
+
+    return decryptedPassword === password;
+}
 
 // Endpoint: /login
 login.post('/', async function (req, res) {
@@ -9,59 +19,30 @@ login.post('/', async function (req, res) {
     const password = req.body.password;
 
     if (!username || !password) {
-        console.log('bad input on login');
-        return res.json({
-            status: "error",
-            error: 'bad input'
-        });
+        console.log('Bad input on login');
+        return res.status(400).json(utils.errorJSON('Bad input'));
     }
 
-    const verifiedRequestBody = {
-        username: username
-    };
+    const usernameResult = await User.findOne({ username }).exec();
 
-
-    /* make sure user verified, this is a temporary hack for MS1 til I have time to learn/implement real sessions */
-    const verified = await request({
-        url: service.createFullURL('verified'),
-        method: "POST",
-        json: verifiedRequestBody
-    }).then(body => {
-        console.log('body: ', body);
-        return body.verified;
-    }).catch(error => {
-        console.log('error: ', error);
-    });
-
-    if (!verified) {
-        return res.json({
-            status: "error",
-            error: 'please verify your account'
-        });
+    if (!usernameResult) {
+        console.log(username + ' does not exist.');
+        return res.status(400).json(utils.errorJSON(username + ' does not exist.'));
     }
 
-    const requestBody = {
-        username: username,
-        password: password
-    };
+    if (validPassword(password, usernameResult.hash.toString(), usernameResult.key)) {
+        if (!usernameResult.verified) {
+            console.log('Please verify your account');
+            return res.status(400).json(utils.errorJSON('Please verify your account'));
+        }
+        console.log('Logging in');
 
-    request({
-        url: service.createFullURL('login'),
-        method: "POST",
-        json: requestBody
-    }).then(body => {
-        console.log('body: ', body);
-        res.cookie('cookieID', body.cookieID);
+        res.cookie('cookieID', usernameResult._id);
         res.cookie('username', username);
-        res.json({
-            status: "OK"
-        });
-    }).catch(error => {
-        console.log('error: ', error);
-        res.json({
-            status: "error",
-            error: error
-        });
-    });
+        return res.json(utils.okJSON());
+    } 
+    else {
+        return res.status(400).json(utils.errorJSON('Incorrect credentials'));
+    }
 });
 module.exports = login;

@@ -1,7 +1,17 @@
 const express = require('express');
 const validator = require('validator');
+const utils = require('../utils/service-utils');
+
+const User = require('./models/user');
+const Question = require('./models/question');
+const Answer = require('./models/answer');
+const Media = require('./models/media');
 
 const questions = express.Router();
+
+function getTimeStamp() {
+    return Math.round((new Date()).getTime() / 1000);
+}
 
 // Endpoint: /questions
 questions.route('/').all(function (req, res, next) {
@@ -24,56 +34,57 @@ questions.route('/add').all(function (req, res, next) {
         console.log('POST to /questions/add');
 
         if (!req.body || !req.body.title || !req.body.body || !req.body.tags) {
-            console.log('bad input on /questions/add');
-            return res.json({
-                status: "error",
-                error: 'bad input on /questions/add'
-            });
+            console.log('Bad input on /questions/add');
+            return res.status(400).json(utils.errorJSON('Bad input on /questions/add'));
         }
         if (!req.cookies.cookieID) {
-            console.log('not logged in');
-            return res.json({
-                status: "error",
-                error: "Not logged in"
-            });
+            console.log('Not logged in');
+            return res.status(400).json(utils.errorJSON('Not logged in'));
         }
-
 
         const title = req.body.title;
         const body = req.body.body;
         const tags = req.body.tags;
-        const cookieID = req.cookies.cookieID;
-        // const media = req.body.media;
+        const user_id = req.cookies.cookieID;
+        const media = req.body.media;
 
-        const verifiedRequestBody = {
-            cookieID: cookieID
-        };
-
-        /* make sure user verified, this is a temporary hack for MS1 til I have time to learn/implement real sessions */
-        const verified = await request({
-            url: service.createFullURL('verified'),
-            method: "POST",
-            json: verifiedRequestBody
-        }).then(body => {
-            console.log('body: ', body);
-            return body.verified;
-        }).catch(error => {
-            console.log('error: ', error);
-        });
-
-        if (!verified) {
-            return res.json({
-                status: "error",
-                error: 'please verify your account'
-            });
+        if (!utils.userVerified(req)) {
+            return res.status(400).json(utils.errorJSON('Please verify your account'));
         }
 
-        const requestBody = {
+        const timestamp = getTimeStamp();
+        const id = mongoose.Types.ObjectId();
+        console.log('user = ' + user_id);
+    
+        const question = {
+            _id: id,
+            user_id,
             title,
             body,
             tags,
-            cookieID
+            score: 0,
+            timestamp,
+            view_count: 0,
+            answers: []
         };
+
+        if (media) {
+            question.media = media;
+        }
+    
+        const data = new Question(question);
+        data.save();
+    
+        const usernameResult = await User.findById(user_id).exec();
+        const usernameResult = await usernameQuery.exec();
+    
+        usernameResult.questions.push(id);
+        usernameResult.save();
+    
+        res.json({
+            id: id
+        });
+
 
         request({
             url: service.createFullURL('questions/add'),

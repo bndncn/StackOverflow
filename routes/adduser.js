@@ -4,6 +4,7 @@ const CryptoJS = require("crypto-js");
 const mongoose = require('mongoose');
 
 const User = require('../models/user');
+const utils = require('../utils/service-utils');
 const mail = require('../utils/mail');
 
 const adduser = express.Router();
@@ -17,10 +18,7 @@ adduser.post('/', async function (req, res) {
 
     if (!username || !email || !password) {
         console.log('bad input on addUser');
-        return res.status(400).json({
-            status: "error",
-            error: 'bad input'
-        });
+        return res.status(400).json(utils.errorJSON('Bad input'));
     }
 
     const credentialsTaken = await User.findOne({
@@ -33,9 +31,7 @@ adduser.post('/', async function (req, res) {
     console.log('credentialsTaken = ' + credentialsTaken);
 
     if (credentialsTaken) {
-        return res.status(400).json({
-            error: 'account credentials non unique'
-        });
+        return res.status(400).json(utils.errorJSON('Account credentials already used'));
     }
 
     const key = crypto.randomBytes(16).toString('hex');
@@ -60,9 +56,7 @@ adduser.post('/', async function (req, res) {
 
     mail.emailKey(email, key);
 
-    res.json({
-        status: "OK"
-    });
+    return res.json(utils.okJSON());
 });
 
 

@@ -1,41 +1,29 @@
 const express = require('express');
+const utils = require('../utils/service-utils');
+
 const logout = express.Router();
 
 // Endpoint: /logout
-logout.post('/', function (req, res) {
+logout.post('/', async function (req, res) {
     console.log('POST on logout');
 
     if (!req.cookies || !req.cookies.cookieID || !req.cookies.username) {
-        console.log('bad input on logout');
-        return res.json({
-            status: "error",
-            error: "Missing cookie"
-        });
+        console.log('No cookies on logout');
+        return res.status(400).json(utils.errorJSON('Missing cookies'));
     }
 
-    const requestBody = {
-        cookieID: req.cookies.cookieID,
-        username: req.cookies.username
-    };
+    const sessionResult = await User.findById(req.cookies.cookieID).exec();
 
-    request({
-        url: service.createFullURL('logout'),
-        method: "POST",
-        json: requestBody
-    }).then(body => {
-        console.log('body: ', body);
-        res.clearCookie('cookieID');
-        res.clearCookie('username');
-        res.json({
-            status: "OK"
-        });
-    }).catch(error => {
-        console.log('error: ', error);
-        res.json({
-            status: "error",
-            error: error
-        });
-    });
+    if (!sessionResult) {
+        console.log('User with this sessionID does not exist.');
+        return res.status(400).json(utils.errorJSON('User with this sessionID does not exist.'));
+    }
+
+    console.log('User found for cookie');
+
+    res.clearCookie('cookieID');
+    res.clearCookie('username');
+    return res.json(utils.okJSON());
 });
 
 module.exports = logout;

@@ -1,8 +1,8 @@
 const User = require('../models/user');
 
-function checkVerified(req) {
-    if (req.body.cookieID) {
-        User.findById(req.body.cookieID)
+function userVerified(req) {
+    if (req.cookies.cookieID) {
+        User.findById(req.cookies.cookieID)
             .lean()
             .exec()
             .then(user => {
@@ -28,4 +28,23 @@ function checkVerified(req) {
     }
 }
 
-module.exports.checkVerified = checkVerified;
+function okJSON(...args) {
+    const baseJSON = { status: 'OK' };
+    
+    let i = 0;
+    while (i < args.length) {
+        const key = args[i++];
+        const val = args[i++];
+        baseJSON[key] = val;
+    }
+
+    return baseJSON;
+}
+
+function errorJSON(errMsg) {
+    return { status: 'error', error: errMsg };
+}
+
+module.exports.userVerified = userVerified;
+module.exports.okJSON = okJSON;
+module.exports.errorJSON = errorJSON;

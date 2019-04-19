@@ -1,7 +1,7 @@
 const express = require('express');
 const index = express.Router();
 
-// Endpoint: /
+// Endpoint: Homepage
 index.get('/', function(req, res) {
     res.render('./pages/index');
 });
