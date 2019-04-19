@@ -4,7 +4,7 @@ const CryptoJS = require("crypto-js");
 const mongoose = require('mongoose');
 
 const User = require('../models/user');
-const mail = require('../service-utils/mail');
+const mail = require('../utils/mail');
 
 const adduser = express.Router();
 
