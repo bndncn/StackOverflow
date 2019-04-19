@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
 
 // Routes
 const index = require('./routes/index');
@@ -36,5 +37,16 @@ app.use('/user', user);
 app.use('/answers', answers);
 app.use('/addmedia', addmedia);
 app.use('/media', media);
+
+// Mongoose setup 
+const dbURL = 'mongodb://192.168.122.30:27017/stackoverflow';
+mongoose.connect(dbURL, { useNewUrlParser: true }, function (err) {
+    if (err) {
+        console.log(err);
+    } 
+    else {
+        console.log('Connected to MongoDB...');
+    }
+});
 
 app.listen(port, () => console.log('Starting StackOverflow service...'));

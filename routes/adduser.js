@@ -1,4 +1,11 @@
 const express = require('express');
+const crypto = require('crypto');
+const CryptoJS = require("crypto-js");
+const mongoose = require('mongoose');
+
+const User = require('../models/user');
+const mail = require('../service-utils/mail');
+
 const adduser = express.Router();
 
 // Endpoint: /adduser
@@ -10,33 +17,51 @@ adduser.post('/', function (req, res) {
 
     if (!username || !email || !password) {
         console.log('bad input on addUser');
-        return res.json({
+        return res.status(400).json({
             status: "error",
             error: 'bad input'
         });
     }
 
-    const requestBody = {
+    const credentialsTaken = await User.findOne({
+        $or: [
+            { username: username },
+            { email: email }
+        ]
+    }).exec();
+
+    console.log('credentialsTaken = ' + credentialsTaken);
+
+    if (credentialsTaken) {
+        return res.status(400).json({
+            error: 'account credentials non unique'
+        });
+    }
+
+    const key = crypto.randomBytes(16).toString('hex');
+    const hash = CryptoJS.AES.encrypt(req.body.password, key);
+
+    const user = {
+        _id: mongoose.Types.ObjectId(),
         username: username,
+        hash: hash,
         email: email,
-        password: password
+        key: key,
+        verified: false,
+        reputation: 1,
+        questions: [],
+        answers: []
     };
 
-    request({
-        url: service.createFullURL('adduser'),
-        method: "POST",
-        json: requestBody
-    }).then(body => {
-        console.log('body: ', body);
-	    res.json({
-            status: "OK"
-        });
-    }).catch(error => {
-        console.log('error: ', error);
-        res.json({
-            status: "error",
-            error: error
-        });
+    const data = new User(user);
+    data.save();
+
+    console.log('emailing key to ' + email);
+
+    mail.emailKey(email, key);
+
+    res.json({
+        status: "OK"
     });
 });
 
