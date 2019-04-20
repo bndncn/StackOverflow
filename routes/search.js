@@ -1,4 +1,6 @@
 const express = require('express');
+const utils = require('../utils/service-utils');
+
 const search = express.Router();
 
 function getTimeStamp() {
