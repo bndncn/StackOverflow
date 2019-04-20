@@ -87,6 +87,7 @@ questions.route('/add').all(function (req, res, next) {
             score: 0,
             timestamp,
             view_count: 0,
+            upvote_user_ids: {},
             answers: [],
             media: []
         };
@@ -408,7 +409,8 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             score: 0,
             is_accepted: false,
             timestamp: timestamp,
-            media: []
+            media: [],
+            upvote_user_ids: {}
         };
 
         checkValidMedia(media, res, answer);

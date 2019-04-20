@@ -1,4 +1,5 @@
 const express = require('express');
+const User = require('../models/user');
 const utils = require('../utils/service-utils');
 
 const logout = express.Router();
