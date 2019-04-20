@@ -277,8 +277,8 @@ questions.route('/:id/upvote').all(function (req, res, next) {
     console.log('id: ' + req.params.id);
 
     if (!req.params.id || !validator.isMongoId(req.params.id)) {
-        console.log('Bad input on /:id/upvote');
-        return res.status(400).json(utils.errorJSON('Bad input'));
+        console.log('Bad input on /questions/:id/upvote');
+        return res.status(400).json(utils.errorJSON());
     }
 
     next();
@@ -295,7 +295,7 @@ questions.route('/:id/upvote').all(function (req, res, next) {
 
         if (!cookieID) {
             console.log('Not logged in');
-            return res.status(400).json(utils.errorJSON('Not logged in'));
+            return res.status(400).json(utils.errorJSON());
         }
 
         utils.ensureUserVerified(res, req);
@@ -304,8 +304,7 @@ questions.route('/:id/upvote').all(function (req, res, next) {
             .exec()
             .then(question => {
                 if (!question) {
-                    'Question not found for id'
-                    return res.status(404).json(utils.errorJSON('Question not found for id'));
+                    return res.status(404).json(utils.errorJSON());
                 }
                 const voter_user_id = cookieID.toString();
                 const new_vote_type = upvote;
@@ -354,7 +353,7 @@ questions.route('/:id/upvote').all(function (req, res, next) {
             })
             .catch(err => {
                 console.log('upvote err = ' + err);
-                res.status(404).json(utils.errorJSON(err));
+                res.status(404).json(utils.errorJSON());
             });
     });
 

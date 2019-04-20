@@ -42,7 +42,10 @@ function okJSON(...args) {
 }
 
 function errorJSON(errMsg) {
-    return { status: 'error', error: errMsg };
+    if (errMsg === undefined) 
+        return { status: 'error' };
+    else
+        return { status: 'error', error: errMsg };
 }
 
 module.exports.ensureUserVerified = ensureUserVerified;

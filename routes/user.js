@@ -29,7 +29,7 @@ user.route('/:username').all(function (req, res, next) {
     
         if (!user) {
             console.log(username + ' does not exist.');
-            return res.status(404).json(utils.errorJSON(username + ' does not exist.'));
+            return res.status(404).json(utils.errorJSON());
         }
         else {
             return res.json(utils.okJSON('user', user));
@@ -49,7 +49,7 @@ user.route('/:username/questions').all(function (req, res, next) {
     
         if (!user) {
             console.log(username + ' does not exist.');
-            return res.status(404).json(utils.errorJSON(username + ' does not exist.'));
+            return res.status(404).json(utils.errorJSON());
         }
         else {
             return res.json(utils.okJSON('questions', user.questions));
@@ -69,7 +69,7 @@ user.route('/:username/answers').all(function (req, res, next) {
     
         if (!user) {
             console.log(username + ' does not exist.');
-            return res.status(404).json(utils.errorJSON(username + ' does not exist.'));
+            return res.status(404).json(utils.errorJSON());
         }
         else {
             return res.json(utils.okJSON('answers', user.answers));
