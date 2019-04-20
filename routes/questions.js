@@ -2,10 +2,10 @@ const express = require('express');
 const validator = require('validator');
 const utils = require('../utils/service-utils');
 
-const User = require('./models/user');
-const Question = require('./models/question');
-const Answer = require('./models/answer');
-const Media = require('./models/media');
+const User = require('../models/user');
+const Question = require('../models/question');
+const Answer = require('../models/answer');
+const Media = require('../models/media');
 
 const questions = express.Router();
 
