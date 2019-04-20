@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const mongoose = require('mongoose');
 const Media = require('../models/media');
 const utils = require('../utils/service-utils');
 const addmedia = express.Router();
