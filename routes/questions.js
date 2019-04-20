@@ -115,7 +115,7 @@ questions.route('/:id').all(function (req, res, next) {
     }
     next();
 })
-    .get(function (req, res) {
+    .get(async function (req, res) {
         console.log('GET to /questions/{id}');
 
         const question = await Question.findById(req.params.id).exec();
@@ -182,7 +182,7 @@ questions.route('/:id').all(function (req, res, next) {
             res.status(404).json(utils.errorJSON(err));
         });
     })
-    .delete(function (req, res) {
+    .delete(async function (req, res) {
         console.log('DELETE to /questions/{id}');
 
         const user_id = req.cookies.cookieID;
