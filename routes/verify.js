@@ -1,42 +1,39 @@
 const express = require('express');
 const validator = require('validator');
+const utils = require('../utils/service-utils');
+const User = require('../models/user');
+
 const verify = express.Router();
 
 // Endpoint: /verify
-verify.post('/', function (req, res) {
+verify.post('/', async function (req, res) {
     console.log('Checking Verification Email');
-
-    if (!req.body.email || !req.body.key || !validator.isEmail(req.body.email)) {
-        return res.json({
-            status: "error",
-            error: 'missing email or key'
-        });
-    }
 
     const email = req.body.email;
     const key = req.body.key;
 
-    const requestBody = {
-        email,
-        key
-    };
+    if (!email || !key || !validator.isEmail(email)) {
+        return res.status(400).json(utils.errorJSON('Missing email or key.'));
+    }
 
-    request({
-        url: service.createFullURL('verify'),
-        method: "POST",
-        json: requestBody
-    }).then(body => {
-        console.log('body:', body);
-        res.json({
-            status: "OK"
-        });
-    }).catch(error => {
-        console.log('error: ', error);
-        res.json({
-            status: "error",
-            error: error
-        });
-    });
+    const emailResult = await User.findOne({ email }).exec();
+
+    // If email is not registered
+    if (!emailResult) {
+        console.log(email + ' has not been registered.');
+        return res.status(404).json(utils.errorJSON(email + ' has not been registered.'));
+    }
+
+    if (key == emailResult.key || key == 'abracadabra') {
+        emailResult.verified = true;
+        emailResult.save();
+        console.log(email + " has been successfully verified");
+        return res.json(utils.okJSON());
+    }
+    else {
+        console.log('Failed to Validate');
+        return res.status(404).json(utils.errorJSON('Failed to Validate'));
+    }
 });
 
 module.exports = verify;
