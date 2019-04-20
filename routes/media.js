@@ -10,7 +10,7 @@ media.get('/:id', async function (req, res) {
 
     const id = req.params.id;
 
-    const mediaResult = await Media.findById({ id }).exec();
+    const mediaResult = await Media.findById(id).exec();
 
     if (!mediaResult) {
         console.log('Media id: ' + id + ' does not exist.');
