@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const validator = require('validator');
 const utils = require('../utils/service-utils');
 
@@ -66,9 +67,7 @@ questions.route('/add').all(function (req, res, next) {
             return res.status(400).json(utils.errorJSON('Not logged in'));
         }
 
-        if (!utils.userVerified(req)) {
-            return res.status(400).json(utils.errorJSON('Please verify your account'));
-        }
+        utils.ensureUserVerified(res, req);
 
         const title = req.body.title;
         const body = req.body.body;
@@ -286,7 +285,7 @@ questions.route('/:id/upvote').all(function (req, res, next) {
     .post(function (req, res) {
         console.log('POST to /questions/{id}/upvote');
 
-        const upvote = req.body.upvote;
+        let upvote = req.body.upvote;
         const cookieID = req.cookies.cookieID;
 
         if (upvote === undefined) {
@@ -298,9 +297,7 @@ questions.route('/:id/upvote').all(function (req, res, next) {
             return res.status(400).json(utils.errorJSON('Not logged in'));
         }
 
-        if (!utils.userVerified(req)) {
-            return res.status(400).json(utils.errorJSON('Please verify your account'));
-        }
+        utils.ensureUserVerified(res, req);
 
         Question.findById(req.params.id)
             .exec()
@@ -315,20 +312,20 @@ questions.route('/:id/upvote').all(function (req, res, next) {
                 let score_rep_delta;
 
                 // account for previous value
-                if (existing_vote_type === undefined) {
-                    score_rep_delta = new_vote_type === true ? 1 : -1;
+                if (existing_vote_type == undefined) {
+                    score_rep_delta = new_vote_type == true ? 1 : -1;
                 } else {
                     // previous downvote
-                    if (existing_vote_type === false) {
-                        score_rep_delta = new_vote_type === false ? 1 : 2;
+                    if (existing_vote_type == false) {
+                        score_rep_delta = new_vote_type == false ? 1 : 2;
                     } else {
-                        score_rep_delta = new_vote_type === true ? -1 : -2;
+                        score_rep_delta = new_vote_type == true ? -1 : -2;
                     }
                 }
                 question.score += score_rep_delta;
 
 
-                if (existing_vote_type === new_vote_type) {
+                if (existing_vote_type == new_vote_type) {
                     // if toggle, remove like they never voted in the first place
                     // this is how deleting from map works with Mongoose
                     question.upvote_user_ids.set(voter_user_id, undefined);
@@ -379,18 +376,15 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
         const media = req.body.media;
         const user_id = req.cookies.cookieID;
         const username = req.cookies.username;
-
+        const cookieID = req.cookies.cookieID;
         
         if (!cookieID || !username) {
             console.log('Not logged in');
             return res.status(400).json(utils.errorJSON('Not logged in'));
         }
 
-        if (!utils.userVerified(req)) {
-            return res.status(400).json(utils.errorJSON('Please verify your account'));
-        }
+        utils.ensureUserVerified(res, req);
 
-        const user_id = req.body.cookieID;
         const question = await Question.findOne({
             _id: req.params.id,
             answers_user_ids: {
@@ -408,7 +402,7 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
     
         const answer = {
             _id: id,
-            user_id: user_id,
+            user_id,
             user: username,
             body: body,
             score: 0,

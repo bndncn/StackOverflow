@@ -1,15 +1,15 @@
 const User = require('../models/user');
 
-function userVerified(req) {
+function ensureUserVerified(res, req) {
     if (req.cookies.cookieID) {
         User.findById(req.cookies.cookieID)
             .lean()
             .exec()
             .then(user => {
-                return true;
+                // Do nothing
             })
             .catch(err => {
-                return false;
+                return res.status(400).json(utils.errorJSON('Please verify your account'));
             })
     } 
     else if (req.body.username) {
@@ -17,14 +17,14 @@ function userVerified(req) {
             .lean()
             .exec()
             .then(user => {
-                return true;
+                // Do nothing
             })
             .catch(err => {
-                return false;
+                return res.status(400).json(utils.errorJSON('Please verify your account'));
             })
     } 
     else {
-        return false;
+        return res.status(400).json(utils.errorJSON('Please verify your account'));
     }
 }
 
@@ -45,6 +45,6 @@ function errorJSON(errMsg) {
     return { status: 'error', error: errMsg };
 }
 
-module.exports.userVerified = userVerified;
+module.exports.ensureUserVerified = ensureUserVerified;
 module.exports.okJSON = okJSON;
 module.exports.errorJSON = errorJSON;

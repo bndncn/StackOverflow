@@ -9,7 +9,12 @@ var answerSchema = new Schema({
     score: Number,
     is_accepted: Boolean,
     timestamp: Number,
-    media: [{ type: Schema.Types.ObjectId, ref: 'Media' }]
+    question_id: { type: Schema.Types.ObjectId, ref: 'Question' },
+    media: [{ type: Schema.Types.ObjectId, ref: 'Media' }],
+    upvote_user_ids: {
+        type: Map,
+        of: Boolean
+    }
 },
     {
         toJSON: {
@@ -19,6 +24,8 @@ var answerSchema = new Schema({
                 delete ret._id;
                 delete ret.user_id;
                 delete ret.__v;
+                delete ret.question_id;
+                delete ret.upvote_user_ids;
             }
         }
     }

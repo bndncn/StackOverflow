@@ -12,11 +12,15 @@ var questionSchema = new Schema({
     view_IP: [String],
     answer_count: Number,
     timestamp: Number,
-    media: [{ type: Schema.Types.ObjectId, ref: 'Media' }], 
+    media: [{ type: Schema.Types.ObjectId, ref: 'Media' }],
     tags: [String],
     accepted_answer_id: { type: Schema.Types.ObjectId, ref: 'Answer', default: null },
     answers: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
-    answers_user_ids: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+    answers_user_ids: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    upvote_user_ids: {
+        type: Map,
+        of: Boolean
+    }
 },
     {
         toJSON: {
@@ -32,6 +36,8 @@ var questionSchema = new Schema({
                 delete ret._id;
                 delete ret.user_id;
                 delete ret.__v;
+                delete ret.answers_user_ids;
+                delete ret.upvote_user_ids;
             }
         }
     }
