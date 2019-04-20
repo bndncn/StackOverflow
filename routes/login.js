@@ -1,6 +1,7 @@
 const express = require('express');
 const CryptoJS = require("crypto-js");
 const utils = require('../utils/service-utils');
+const User = require('../models/user');
 
 const login = express.Router();
 
