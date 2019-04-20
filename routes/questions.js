@@ -65,45 +65,41 @@ questions.route('/add').all(function (req, res, next) {
             score: 0,
             timestamp,
             view_count: 0,
-            answers: []
+            answers: [],
+            media: []
         };
 
         if (media) {
-            question.media = media;
+
+            for (let i = 0; i < media.length; i++) {
+                const mediaResult = await Media.findById(media[i]).exec();
+
+                if (!mediaResult || mediaResult.used) {
+                    return res.status(400).json(utils.errorJSON('Media id not found / already used'));
+                }
+
+                // Add media id to question's media list
+                question.media.push(mongoose.Types.ObjectId(media[i]));
+            }
+            
+            // If all media ids aren't used and exist
+            for (let i = 0; i < media.length; i++) {
+                // Set media to used
+                mediaResult.used = true;
+                mediaResult.save();
+            }
         }
     
         const data = new Question(question);
         data.save();
     
+        // Add question reference to question asker
         const usernameResult = await User.findById(user_id).exec();
-        const usernameResult = await usernameQuery.exec();
-    
         usernameResult.questions.push(id);
         usernameResult.save();
     
-        res.json({
-            id: id
-        });
+        res.json(utils.okJSON('id', id));
 
-
-        request({
-            url: service.createFullURL('questions/add'),
-            method: "POST",
-            json: requestBody
-        }).then(body => {
-            console.log('body: ', body);
-            console.log('added question success');
-            res.json({
-                status: "OK",
-                id: body.id
-            });
-        }).catch(error => {
-            console.log('error: ', error);
-            res.json({
-                status: "error",
-                error: error
-            });
-        });
     });
 
 // Endpoint: /questions/{id}

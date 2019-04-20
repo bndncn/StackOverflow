@@ -5,6 +5,7 @@ const mediaSchema = new Schema({
     _id: Schema.Types.ObjectId,
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     mimetype: String,
+    used: Boolean,
     content: Buffer
 });
 
