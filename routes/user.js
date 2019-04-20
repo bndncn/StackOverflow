@@ -41,7 +41,7 @@ user.route('/:username/questions').all(function (req, res, next) {
     console.log('/user/{username}/questions');
     next();
 })
-    .get(function (req, res) {
+    .get(async function (req, res) {
         console.log('GET to /user/{username}/questions');
         const username = req.params.username;
 
@@ -61,7 +61,7 @@ user.route('/:username/answers').all(function (req, res, next) {
     console.log('/user/{username}/answers');
     next();
 })
-    .get(function (req, res) {
+    .get(async function (req, res) {
         console.log('GET to /user/{username}/answers');
         const username = req.params.username;
 
