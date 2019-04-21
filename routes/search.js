@@ -100,7 +100,7 @@ search.post('/', function (req, res) {
     } 
 
     // Already checked that sort_by must be "score" or "timestamp"
-    const sort = sort_by === 'score' ? { score: -1 } : { score: -1 }
+    const sort = sort_by === 'score' ? { score: -1 } : { timestamp: -1 }
 
     Question.find(condition)
         .populate({
