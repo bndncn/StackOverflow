@@ -11,9 +11,12 @@ var answerSchema = new Schema({
     timestamp: Number,
     question_id: { type: Schema.Types.ObjectId, ref: 'Question' },
     media: [{ type: Schema.Types.ObjectId, ref: 'Media' }],
-    upvote_user_ids: {
+    vote_user_ids: {
         type: Map,
-        of: Boolean
+        of: {
+            vote_type: Boolean,
+            waive_penalty: Boolean
+        }
     }
 },
     {
@@ -25,7 +28,7 @@ var answerSchema = new Schema({
                 delete ret.user_id;
                 delete ret.__v;
                 delete ret.question_id;
-                delete ret.upvote_user_ids;
+                delete ret.vote_user_ids;
             }
         }
     }

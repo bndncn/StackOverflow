@@ -297,60 +297,102 @@ questions.route('/:id/upvote').all(function (req, res, next) {
         utils.ensureUserVerified(res, req);
 
         Question.findById(req.params.id)
-            .exec()
-            .then(question => {
-                if (!question) {
-                    return res.status(404).json(utils.errorJSON());
-                }
-                const voter_user_id = cookieID.toString();
-                const new_vote_type = upvote;
-                const existing_vote_type = question.upvote_user_ids.get(voter_user_id);
-                let score_rep_delta;
-
-                // account for previous value
-                if (existing_vote_type == undefined) {
-                    score_rep_delta = new_vote_type == true ? 1 : -1;
-                } else {
-                    // previous downvote
-                    if (existing_vote_type == false) {
-                        score_rep_delta = new_vote_type == false ? 1 : 2;
-                    } else {
-                        score_rep_delta = new_vote_type == true ? -1 : -2;
+        .exec()
+        .then(question => {
+            if (!question) {
+                return res.status(404).json(utils.errorJSON());
+            }
+            
+            User.findById(question.user_id)
+                .exec()
+                .then(user => {
+                    if (!user) {
+                        return res.status(404).json(utils.errorJSON());
                     }
-                }
-                question.score += score_rep_delta;
+                    const voter_user_id = cookieID.toString();
+                    const new_vote_type = upvote;
+                    const existing_vote = question.vote_user_ids.get(voter_user_id);
+                    let score_delta;
+                    let rep_delta;
+                    let updated_reputation;
 
+                    // if a new vote
+                    if (existing_vote == undefined) {
+                        score_delta = new_vote_type == true ? 1 : -1;
+                        console.log('new vote with val = %d', score_delta);
+                        rep_delta = score_delta;
+                    } 
+                    else if (existing_vote.vote_type == false) {
+                        console.log('previous downvote');
+                        // previous downvote
+                        score_delta = new_vote_type == true ? 2 : 1;
 
-                if (existing_vote_type == new_vote_type) {
+                        // dont over incr reputation from upvoting a previously waived downvote
+                        if (score_delta === 2 && existing_vote.waive_penalty) {
+                            rep_delta = 1;
+                        } 
+                        else {
+                            rep_delta = score_delta;
+                        }
+                    } 
+                    else {
+                        console.log('previous upvote');
+                        // previous upvote
+                        score_delta = new_vote_type == true ? -1 : -2;
+                        rep_delta = score_delta;
+                    }
+                    console.log('score_delta = %d old_score = %d', score_delta, question.score);
+                    question.score += score_delta;
+
+                    console.log('rep_delta = %d old_rep = %d', rep_delta, user.reputation);
+                    updated_reputation = user.reputation + rep_delta;
+
+                    // downvotes that would reduce rep below 1 must be later waived when undone
+                    let waive_penalty = false;
+                    if (updated_reputation < 1) {
+                        console.log('updated_rep below 1: = %d', updated_reputation);
+                        waive_penalty = true;
+                        user.reputation = 1;
+                    } 
+                    else {
+                        user.reputation = updated_reputation;
+                    }
+                    console.log('new user rep = %d', user.reputation);
+
                     // if toggle, remove like they never voted in the first place
-                    // this is how deleting from map works with Mongoose
-                    question.upvote_user_ids.set(voter_user_id, undefined);
-                } else {
-                    // either update old or insert new user_id -> vote
-                    question.upvote_user_ids.set(voter_user_id, new_vote_type);
-                }
-
-                question.save(function (err) {
-                    console.log('err saving q = ' + err);
-                });
-
-                // update the reputation of the poster
-                User.findByIdAndUpdate(question.user_id, {
-                    $inc: {
-                        reputation: score_rep_delta
+                    if (existing_vote != undefined && existing_vote.vote_type === new_vote_type) {
+                        // this is how deleting from map works with Mongoose
+                        question.vote_user_ids.set(voter_user_id, undefined);
+                        console.log('removed vote from voter_user_id = ' + voter_user_id);
+                    } 
+                    else {
+                        // either update old or insert new user_id -> vote
+                        console.log('updating vote_user_ids with vote_type= ' + new_vote_type + ' and waive_penalty = ' + waive_penalty);
+                        question.vote_user_ids.set(voter_user_id, {
+                            vote_type: new_vote_type,
+                            waive_penalty: waive_penalty
+                        });
                     }
-                })
-                .exec(function (err, res) {
-                    if (err) {
-                        console.log('err update user ' + err);
-                    }
+                    question.save(function (err) {
+                        if (err) {
+                            console.log('err saving question = ' + err);
+                        }
+                    });
+                    user.save(function (err) {
+                        if (err) {
+                            console.log('err saving user = ' + err);
+                        }
+                    });
+                    return res.json(utils.okJSON());
+                }).catch(err => {
+                    console.log('upvote err = ' + err);
+                    return res.status(404).json(utils.errorJSON());
                 });
-                return res.json(utils.okJSON());
-            })
-            .catch(err => {
-                console.log('upvote err = ' + err);
-                res.status(404).json(utils.errorJSON());
-            });
+        
+        }).catch(err => {
+            console.log('upvote err = ' + err);
+            return res.status(404).json(utils.errorJSON());
+        });
     });
 
 // Endpoint: /questions/{id}/answers/add

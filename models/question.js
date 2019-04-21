@@ -17,9 +17,12 @@ var questionSchema = new Schema({
     accepted_answer_id: { type: Schema.Types.ObjectId, ref: 'Answer', default: null },
     answers: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
     answers_user_ids: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    upvote_user_ids: {
+    vote_user_ids: {
         type: Map,
-        of: Boolean
+        of: {
+            vote_type: Boolean,
+            waive_penalty: Boolean
+        }
     }
 },
     {
@@ -37,7 +40,7 @@ var questionSchema = new Schema({
                 delete ret.user_id;
                 delete ret.__v;
                 delete ret.answers_user_ids;
-                delete ret.upvote_user_ids;
+                delete ret.vote_user_ids;
             }
         }
     }
