@@ -10,10 +10,6 @@ const Media = require('../models/media');
 
 const questions = express.Router();
 
-function getTimeStamp() {
-    return Math.round((new Date()).getTime() / 1000);
-}
-
 async function checkValidMedia(media, res, item) {
     if (media) {
 
@@ -74,7 +70,7 @@ questions.route('/add').all(function (req, res, next) {
         const tags = req.body.tags;
         const user_id = req.cookies.cookieID;
         const media = req.body.media;
-        const timestamp = getTimeStamp();
+        const timestamp = utils.getTimeStamp();
         const id = mongoose.Types.ObjectId();
         console.log('user = ' + user_id);
     
@@ -397,7 +393,7 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             return res.status(404).json(utils.errorJSON('Question not found / user already answered with id: ' + req.params.id));
         }
     
-        const timestamp = getTimeStamp();
+        const timestamp = utils.getTimeStamp();
         const id = mongoose.Types.ObjectId();
     
         const answer = {

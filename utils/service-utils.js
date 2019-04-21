@@ -28,6 +28,10 @@ function ensureUserVerified(res, req) {
     }
 }
 
+function getTimeStamp() {
+    return Math.round((new Date()).getTime() / 1000);
+}
+
 function okJSON(...args) {
     const baseJSON = { status: 'OK' };
     
@@ -49,5 +53,6 @@ function errorJSON(errMsg) {
 }
 
 module.exports.ensureUserVerified = ensureUserVerified;
+module.exports.getTimeStamp = getTimeStamp;
 module.exports.okJSON = okJSON;
 module.exports.errorJSON = errorJSON;
