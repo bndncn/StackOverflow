@@ -3,7 +3,7 @@ const utils = require('../utils/service-utils');
 
 const search = express.Router();
 
-function search(query, questions) {
+function textSearch(query, questions) {
     const searchResults = [];
 
     questions.forEach((question) => {
@@ -117,7 +117,7 @@ search.post('/', function (req, res) {
             // If query string is given, return filtered search result
             if (q) {
                 console.log("\n\nSearching for string " + q);
-                const filteredSearch = search(q, questions).slice(0, limit);
+                const filteredSearch = textSearch(q, questions).slice(0, limit);
                 console.log('filtered search = ' + filteredSearch);
                 
                 return res.json(utils.okJSON('questions', filteredSearch));
