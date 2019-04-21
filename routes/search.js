@@ -1,5 +1,6 @@
 const express = require('express');
 const utils = require('../utils/service-utils');
+const Question = require('../models/question');
 
 const search = express.Router();
 
