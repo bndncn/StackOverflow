@@ -10,7 +10,7 @@ const media = express.Router();
 media.get('/:id', async function (req, res) {
     console.log('Getting media file: ' + req.params.id);
 
-    const selectQuery = 'SELECT content, mimetype FROM imgs WHERE id=?;';
+    const selectQuery = 'SELECT content, mimetype FROM media WHERE id=?;';
     const values = [req.params.id];
 
     client.execute(selectQuery, values, function (err, result) {
