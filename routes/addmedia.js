@@ -16,7 +16,7 @@ addmedia.post('/', upload.single('content'), function (req, res) {
         console.log('No media file');
         return res.status(400).json(utils.errorJSON('No media file'));
     }
-    
+
     if (!req.cookies.cookieID) {
         console.log('Not logged in');
         return res.status(400).json(utils.errorJSON('Not logged in'));

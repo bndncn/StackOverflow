@@ -9,9 +9,9 @@ function ensureUserVerified(res, req) {
                 // Do nothing
             })
             .catch(err => {
-                return res.status(400).json(utils.errorJSON('Please verify your account'));
+                return res.status(400).json(errorJSON('Please verify your account'));
             })
-    } 
+    }
     else if (req.body.username) {
         User.findOne({ username: req.body.username })
             .lean()
@@ -20,11 +20,11 @@ function ensureUserVerified(res, req) {
                 // Do nothing
             })
             .catch(err => {
-                return res.status(400).json(utils.errorJSON('Please verify your account'));
+                return res.status(400).json(errorJSON('Please verify your account'));
             })
-    } 
+    }
     else {
-        return res.status(400).json(utils.errorJSON('Please verify your account'));
+        return res.status(400).json(errorJSON('Please verify your account'));
     }
 }
 
@@ -34,7 +34,7 @@ function getTimeStamp() {
 
 function okJSON(...args) {
     const baseJSON = { status: 'OK' };
-    
+
     let i = 0;
     while (i < args.length) {
         const key = args[i++];
@@ -46,7 +46,7 @@ function okJSON(...args) {
 }
 
 function errorJSON(errMsg) {
-    if (errMsg === undefined) 
+    if (errMsg === undefined)
         return { status: 'error' };
     else
         return { status: 'error', error: errMsg };

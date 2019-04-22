@@ -43,7 +43,7 @@ const dbURL = 'mongodb://mongo1:27017/stackoverflow';
 mongoose.connect(dbURL, { useNewUrlParser: true }, function (err) {
     if (err) {
         console.log(err);
-    } 
+    }
     else {
         console.log('Connected to MongoDB...');
     }

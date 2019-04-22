@@ -41,7 +41,7 @@ login.post('/', async function (req, res) {
         res.cookie('cookieID', usernameResult._id);
         res.cookie('username', username);
         return res.json(utils.okJSON());
-    } 
+    }
     else {
         return res.status(400).json(utils.errorJSON('Incorrect credentials'));
     }
