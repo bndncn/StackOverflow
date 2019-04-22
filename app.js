@@ -3,6 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
+const cassandra = require('cassandra-driver');
+const client = new cassandra.Client({ contactPoints: ['cassandra'], keyspace: 'stackoverflow' });
 
 // Routes
 const index = require('./routes/index');
@@ -50,3 +52,5 @@ mongoose.connect(dbURL, { useNewUrlParser: true }, function (err) {
 });
 
 app.listen(port, () => console.log('Starting StackOverflow service...'));
+
+module.exports.client = client;
