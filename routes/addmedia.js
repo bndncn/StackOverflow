@@ -1,9 +1,10 @@
 const express = require('express');
 const multer = require('multer');
 const mongoose = require('mongoose');
-const Media = require('../models/media');
+const cassandra = require('cassandra-driver');
+const client = new cassandra.Client({ contactPoints: ['cassandra'], localDataCenter: 'datacenter1', keyspace: 'stackoverflow' });
+
 const utils = require('../utils/service-utils');
-const client = require('../app.js').client;
 
 const addmedia = express.Router();
 
@@ -26,7 +27,7 @@ addmedia.post('/', upload.single('content'), function (req, res) {
 
     utils.ensureUserVerified(res, req);
 
-    const id = mongoose.Types.ObjectId().toSring();
+    const id = mongoose.Types.ObjectId().toString();
     const insertQuery = 'INSERT INTO media (id, content, mimetype, used) VALUES(?,?,?,?);';
     const values = [id, req.file.buffer, req.file.mimetype, false];
     
