@@ -15,8 +15,8 @@ media.get('/:id', async function (req, res) {
 
     client.execute(selectQuery, values, function (err, result) {
 		if (err) {
-            console.log('Media id: ' + id + ' does not exist.');
-            return res.status(404).json(utils.errorJSON('Media id: ' + id + ' does not exist.'));
+            console.log('Media id: ' + req.params.id + ' does not exist.');
+            return res.status(404).json(utils.errorJSON('Media id: ' + req.params.id + ' does not exist.'));
         } 
         else {
 			res.contentType(result.rows[0].mimetype);
