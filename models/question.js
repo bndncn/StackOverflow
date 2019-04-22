@@ -12,7 +12,7 @@ var questionSchema = new Schema({
     view_IP: [String],
     answer_count: Number,
     timestamp: Number,
-    media: [{ type: Schema.Types.ObjectId, ref: 'Media' }],
+    media: [String],
     tags: [String],
     accepted_answer_id: { type: Schema.Types.ObjectId, ref: 'Answer', default: null },
     answers: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],

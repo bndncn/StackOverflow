@@ -1,34 +1,47 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const validator = require('validator');
+const cassandra = require('cassandra-driver');
 const utils = require('../utils/service-utils');
+
+const client = new cassandra.Client({ contactPoints: ['cassandra'], localDataCenter: 'datacenter1', keyspace: 'stackoverflow' });
 
 const User = require('../models/user');
 const Question = require('../models/question');
 const Answer = require('../models/answer');
-const Media = require('../models/media');
 
 const questions = express.Router();
 
 async function checkValidMedia(media, res, item) {
     if (media) {
-
+        const selectQuery = 'SELECT used FROM media WHERE id=?;';
         for (let i = 0; i < media.length; i++) {
-            const mediaResult = await Media.findById(media[i]).exec();
+            const values = [media[i]];
 
-            if (!mediaResult || mediaResult.used) {
-                return res.status(400).json(utils.errorJSON('Media id not found / already used'));
-            }
+            client.execute(selectQuery, values, function (err, result) {
+                if (err) {
+                    return res.status(400).json(utils.errorJSON(err));
+                } 
+                else if (result.rows[0].used) {
+                    return res.status(400).json(utils.errorJSON('Media id already used'));
+                }
+            });
 
             // Add media id to question's or answer's media list
-            item.media.push(mongoose.Types.ObjectId(media[i]));
+            item.media.push(media[i]);
         }
 
+        const updateQuery = 'UPDATE media SET used = ? WHERE id=?'; 
         // If all media ids aren't used and exist
         for (let i = 0; i < item.media.length; i++) {
+            const values = [true, media[i]];
             // Set media to used
-            item.media[i].used = true;
-            item.media[i].save();
+            client.execute(updateQuery, values, function (err, result) {
+                if (err) {
+                    console.log('There was an error setting used to true.');
+                } 
+            });
+                  
         }
     }
 }
@@ -195,10 +208,19 @@ questions.route('/:id').all(function (req, res, next) {
             // Find question asker
             const asker = await User.findById(question.user_id).exec();
 
+            const deleteQuery = 'DELETE FROM media WHERE id=?;';
             // Delete each question's media
             if (question.media.length > 0) {
                 question.media.forEach((media_id) => {
-                    Media.findByIdAndRemove(media_id).exec();
+                    const values = [media_id];
+                    client.execute(deleteQuery, values, function (err, result) {
+                        if (err) {
+                            console.log('Error deleting media ' + media_id);
+                        } 
+                        else {
+                            console.log('Deleting media ' + media_id);
+                        }
+                    });
                 });
             }
 
@@ -216,8 +238,14 @@ questions.route('/:id').all(function (req, res, next) {
 
                     // Delete each answer's media
                     if (answer.media.length > 0) {
-                        answer.media.forEach((media_id) => {
-                            Media.findByIdAndRemove(media_id).exec();
+                        const values = [media_id];
+                        client.execute(deleteQuery, values, function (err, result) {
+                            if (err) {
+                                console.log('Error deleting media ' + media_id);
+                            } 
+                            else {
+                                console.log('Deleting media ' + media_id);
+                            }
                         });
                     }
 

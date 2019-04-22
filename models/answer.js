@@ -10,7 +10,7 @@ var answerSchema = new Schema({
     is_accepted: Boolean,
     timestamp: Number,
     question_id: { type: Schema.Types.ObjectId, ref: 'Question' },
-    media: [{ type: Schema.Types.ObjectId, ref: 'Media' }],
+    media: [String],
     vote_user_ids: {
         type: Map,
         of: {
