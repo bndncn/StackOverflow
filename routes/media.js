@@ -8,21 +8,21 @@ const media = express.Router();
 
 // Endpoint: /media/{id}
 media.get('/:id', async function (req, res) {
-    console.log('Getting media file: ' + req.params.id);
+  // console.log('Getting media file: ' + req.params.id);
 
-    const selectQuery = 'SELECT content, mimetype FROM media WHERE id=?;';
-    const values = [req.params.id];
+  const selectQuery = 'SELECT content, mimetype FROM media WHERE id=?;';
+  const values = [req.params.id];
 
-    client.execute(selectQuery, values, function (err, result) {
-		if (err) {
-            console.log('Media id: ' + req.params.id + ' does not exist.');
-            return res.status(404).json(utils.errorJSON('Media id: ' + req.params.id + ' does not exist.'));
-        } 
-        else {
-			res.contentType(result.rows[0].mimetype);
-			return res.send(result.rows[0].content);
-		}
-	});
+  client.execute(selectQuery, values, function (err, result) {
+    if (err) {
+      // console.log('Media id: ' + req.params.id + ' does not exist.');
+      return res.status(404).json(utils.errorJSON('Media id: ' + req.params.id + ' does not exist.'));
+    }
+    else {
+      res.contentType(result.rows[0].mimetype);
+      return res.send(result.rows[0].content);
+    }
+  });
 });
 
 module.exports = media;

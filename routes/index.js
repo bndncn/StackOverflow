@@ -7,7 +7,7 @@ index.get('/', function (req, res) {
 });
 
 index.post('/', function (req, res) {
-    console.log("POST on homepage");
+    // console.log("POST on homepage");
 });
 
 module.exports = index;

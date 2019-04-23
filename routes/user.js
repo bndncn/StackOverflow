@@ -10,25 +10,25 @@ user.route('/').all(function (req, res, next) {
     next();
 })
     .get(function (req, res) {
-        console.log('GET to /user');
+        // console.log('GET to /user');
     })
     .post(function (req, res) {
-        console.log('POST to /user');
+        // console.log('POST to /user');
     });
 
 // Endpoint: /user/{username}
 user.route('/:username').all(function (req, res, next) {
-    console.log('/user/{username}');
+    // console.log('/user/{username}');
     next();
 })
     .get(async function (req, res) {
-        console.log('GET to /user/{username}');
+        // console.log('GET to /user/{username}');
         const username = req.params.username;
 
         const user = await User.findOne({ username }).exec();
-    
+
         if (!user) {
-            console.log(username + ' does not exist.');
+            // console.log(username + ' does not exist.');
             return res.status(404).json(utils.errorJSON());
         }
         else {
@@ -38,17 +38,17 @@ user.route('/:username').all(function (req, res, next) {
 
 // Endpoint: /user/{username}/questions
 user.route('/:username/questions').all(function (req, res, next) {
-    console.log('/user/{username}/questions');
+    // console.log('/user/{username}/questions');
     next();
 })
     .get(async function (req, res) {
-        console.log('GET to /user/{username}/questions');
+        // console.log('GET to /user/{username}/questions');
         const username = req.params.username;
 
         const user = await User.findOne({ username }).exec();
-    
+
         if (!user) {
-            console.log(username + ' does not exist.');
+            // console.log(username + ' does not exist.');
             return res.status(404).json(utils.errorJSON());
         }
         else {
@@ -62,13 +62,13 @@ user.route('/:username/answers').all(function (req, res, next) {
     next();
 })
     .get(async function (req, res) {
-        console.log('GET to /user/{username}/answers');
+        // console.log('GET to /user/{username}/answers');
         const username = req.params.username;
 
         const user = await User.findOne({ username }).exec();
-    
+
         if (!user) {
-            console.log(username + ' does not exist.');
+            // console.log(username + ' does not exist.');
             return res.status(404).json(utils.errorJSON());
         }
         else {

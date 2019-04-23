@@ -13,7 +13,7 @@ function textSearch(query, questions) {
         const questionText = title + ' ' + body;
 
         if (containsWord(query, questionText)) {
-            console.log('\n\n\npushing question with title = ' + title);
+            // console.log('\n\n\npushing question with title = ' + title);
             searchResults.push(question);
         }
     });
@@ -49,7 +49,7 @@ function hashSetContains(hashSet, value) {
 
 // Endpoint: /search
 search.post('/', function (req, res) {
-    console.log('Searching');
+    // console.log('Searching');
 
     const q = req.body.q;
 
@@ -81,7 +81,7 @@ search.post('/', function (req, res) {
         return res.status(400).json(utils.errorJSON('Invalid sort'));
     }
 
-    console.log('\n\n-----------------post on search------------------\n\n');
+    // console.log('\n\n-----------------post on search------------------\n\n');
 
     const condition = {
         timestamp: { $lte: timestamp }
@@ -113,19 +113,19 @@ search.post('/', function (req, res) {
         .sort(sort)
         .exec()
         .then(questions => {
-            console.log('\n\n');
-            console.log('search result = ' + JSON.stringify(questions));
+            // console.log('\n\n');
+            // console.log('search result = ' + JSON.stringify(questions));
             // If query string is given, return filtered search result
             if (q) {
-                console.log("\n\nSearching for string " + q);
+                // console.log("\n\nSearching for string " + q);
                 const filteredSearch = textSearch(q, questions).slice(0, limit);
-                console.log('filtered search = ' + filteredSearch);
+                // console.log('filtered search = ' + filteredSearch);
 
                 return res.json(utils.okJSON('questions', filteredSearch));
             }
             // Else return all results
             else {
-                console.log('Returning all');
+                // console.log('Returning all');
                 const limitedQuestions = questions.slice(0, limit);
                 return res.json(utils.okJSON('questions', limitedQuestions));
             }

@@ -11,13 +11,13 @@ const adduser = express.Router();
 
 // Endpoint: /adduser
 adduser.post('/', async function (req, res) {
-    console.log('POST on adduser');
+    // console.log('POST on adduser');
     const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
 
     if (!username || !email || !password) {
-        console.log('bad input on addUser');
+        // console.log('bad input on addUser');
         return res.status(400).json(utils.errorJSON('Bad input'));
     }
 
@@ -28,11 +28,13 @@ adduser.post('/', async function (req, res) {
         ]
     }).exec();
 
-    console.log('credentialsTaken = ' + credentialsTaken);
+    // console.log('credentialsTaken = ' + credentialsTaken);
 
     if (credentialsTaken) {
         return res.status(400).json(utils.errorJSON('Account credentials already used'));
     }
+
+    res.json(utils.okJSON());
 
     const key = crypto.randomBytes(16).toString('hex');
     const hash = CryptoJS.AES.encrypt(req.body.password, key);
@@ -52,11 +54,9 @@ adduser.post('/', async function (req, res) {
     const data = new User(user);
     data.save();
 
-    console.log('emailing key to ' + email);
+    // console.log('emailing key to ' + email);
 
     mail.emailKey(email, key);
-
-    return res.json(utils.okJSON());
 });
 
 
