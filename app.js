@@ -16,6 +16,7 @@ const user = require('./routes/user');
 const answers = require('./routes/answers');
 const addmedia = require('./routes/addmedia');
 const media = require('./routes/media');
+const reset = require('./routes/reset');
 
 const port = 80;
 const app = express();
@@ -37,6 +38,7 @@ app.use('/user', user);
 app.use('/answers', answers);
 app.use('/addmedia', addmedia);
 app.use('/media', media);
+app.use('/reset', reset);
 
 // Mongoose setup 
 // const dbURL = 'mongodb://mongo1:27017/stackoverflow';
