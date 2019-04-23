@@ -1,4 +1,5 @@
-const sendmail = require('sendmail')();
+const sendmail = require('sendmail')({
+silent: true});
 
 function emailKey(email, key) {
     // console.log('in func emailKey');
