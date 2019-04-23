@@ -212,20 +212,27 @@ questions.route('/:id').all(function (req, res, next) {
         // Find question asker
         const asker = await User.findById(question.user_id).exec();
 
-        const deleteQuery = 'DELETE FROM media WHERE id=?;';
+        const deleteQuery = 'DELETE FROM media WHERE id IN ?;';
         // Delete each question's media
         if (question.media.length > 0) {
-            question.media.forEach((media_id) => {
-                const values = [media_id];
-                client.execute(deleteQuery, values, function (err, result) {
-                    if (err) {
-                        console.log('Error deleting media ' + media_id);
-                    }
-                    // else {
-                    //     console.log('Deleting media ' + media_id);
-                    // }
-                });
+            const values = [question.media];
+            client.execute(deleteQuery, values, function (err, result) {
+                if (err) {
+                    console.log('Error deleting media');
+                }
             });
+
+            // question.media.forEach((media_id) => {
+            //     const values = [media_id];
+            //     client.execute(deleteQuery, values, function (err, result) {
+            //         if (err) {
+            //             console.log('Error deleting media ' + media_id);
+            //         }
+            //         // else {
+            //         //     console.log('Deleting media ' + media_id);
+            //         // }
+            //     });
+            // });
         }
 
         // Subtract deleted question's score from asker's reputation
@@ -242,15 +249,22 @@ questions.route('/:id').all(function (req, res, next) {
 
                 // Delete each answer's media
                 if (answer.media.length > 0) {
-                    const values = [media_id];
+                    const values = [answer.media];
                     client.execute(deleteQuery, values, function (err, result) {
                         if (err) {
-                            console.log('Error deleting media ' + media_id);
+                            console.log('Error deleting media');
                         }
-                        // else {
-                        //     console.log('Deleting media ' + media_id);
-                        // }
                     });
+
+                    // const values = [media_id];
+                    // client.execute(deleteQuery, values, function (err, result) {
+                    //     if (err) {
+                    //         console.log('Error deleting media ' + media_id);
+                    //     }
+                    //     // else {
+                    //     //     console.log('Deleting media ' + media_id);
+                    //     // }
+                    // });
                 }
 
                 // Find question answerer
