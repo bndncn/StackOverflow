@@ -33,12 +33,13 @@ adduser.post('/', async function (req, res) {
     if (credentialsTaken) {
         return res.status(400).json(utils.errorJSON('Account credentials already used'));
     }
-    mail.emailKey(email, key);
 
-    res.json(utils.okJSON());
 
     const key = crypto.randomBytes(16).toString('hex');
     const hash = CryptoJS.AES.encrypt(req.body.password, key);
+
+    mail.emailKey(email, key);
+    res.json(utils.okJSON());
 
     const user = {
         _id: mongoose.Types.ObjectId(),
