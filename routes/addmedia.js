@@ -25,22 +25,26 @@ addmedia.post('/', upload.single('content'), function (req, res) {
         return res.status(400).json(utils.errorJSON('Not logged in'));
     }
 
-    utils.ensureUserVerified(res, req);
+    if (!req.cookies.verified) {
+        console.log('Please verify');
+        return res.status(400).json(utils.errorJSON('Please verify'));
+    }
+    // utils.ensureUserVerified(res, req);
 
     const id = mongoose.Types.ObjectId().toString();
     const insertQuery = 'INSERT INTO media (id, content, mimetype, used) VALUES(?,?,?,?);';
     const values = [id, req.file.buffer, req.file.mimetype, false];
-    
+
     client.execute(insertQuery, values, { prepare: true }, function (err, result) {
-		if (err) {
-			console.log("ERROR IN DEP = " + err);
-			return res.status(400).json(utils.errorJSON(err));
-        } 
+        if (err) {
+            console.log("ERROR IN DEP = " + err);
+            return res.status(400).json(utils.errorJSON(err));
+        }
         else {
-			console.log('result = ' + result);
-			return res.json(utils.okJSON('id', id));
-		}
-	});
+            console.log('result = ' + result);
+            return res.json(utils.okJSON('id', id));
+        }
+    });
 });
 
 module.exports = addmedia;

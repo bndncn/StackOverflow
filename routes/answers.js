@@ -34,7 +34,11 @@ answers.route('/:id/upvote').all(function (req, res, next) {
             return res.status(400).json(utils.errorJSON());
         }
 
-        utils.ensureUserVerified(res, req);
+        if (!req.cookies.verified) {
+            console.log('Please verify');
+            return res.status(400).json(utils.errorJSON('Please verify'));
+        }
+        // utils.ensureUserVerified(res, req);
 
         Answer.findById(req.params.id)
             .exec()

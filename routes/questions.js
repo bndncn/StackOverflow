@@ -72,8 +72,11 @@ questions.route('/add').all(function (req, res, next) {
             // console.log('Not logged in');
             return res.status(400).json(utils.errorJSON('Not logged in'));
         }
-
-        utils.ensureUserVerified(res, req);
+        if (!req.cookies.verified) {
+            console.log('Please verify');
+            return res.status(400).json(utils.errorJSON('Please verify'));
+        }
+        // utils.ensureUserVerified(res, req);
 
         const title = req.body.title;
         const body = req.body.body;
@@ -322,8 +325,11 @@ questions.route('/:id/upvote').all(function (req, res, next) {
             // console.log('Not logged in');
             return res.status(400).json(utils.errorJSON());
         }
-
-        utils.ensureUserVerified(res, req);
+        if (!req.cookies.verified) {
+            console.log('Please verify');
+            return res.status(400).json(utils.errorJSON('Please verify'));
+        }
+        // utils.ensureUserVerified(res, req);
 
         Question.findById(req.params.id)
             .exec()
@@ -452,8 +458,11 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             // console.log('Not logged in');
             return res.status(400).json(utils.errorJSON('Not logged in'));
         }
-
-        utils.ensureUserVerified(res, req);
+        if (!req.cookies.verified) {
+            console.log('Please verify');
+            return res.status(400).json(utils.errorJSON('Please verify'));
+        }
+        // utils.ensureUserVerified(res, req);
 
         const question = await Question.findOne({
             _id: req.params.id,
