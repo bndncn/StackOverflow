@@ -39,7 +39,8 @@ app.use('/addmedia', addmedia);
 app.use('/media', media);
 
 // Mongoose setup 
-const dbURL = 'mongodb://mongo1:27017/stackoverflow';
+// const dbURL = 'mongodb://mongo1:27017/stackoverflow';
+const dbURL = 'mongodb://localhost:27017/stackoverflow';
 mongoose.connect(dbURL, { useNewUrlParser: true }, function (err) {
     if (err) {
         console.log(err);

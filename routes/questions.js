@@ -18,14 +18,11 @@ async function checkValidMedia(media, res, item) {
         for (let i = 0; i < media.length; i++) {
             const values = [media[i]];
 
-            client.execute(selectQuery, values, function (err, result) {
-                if (err) {
-                    return res.status(400).json(utils.errorJSON(err));
-                } 
-                else if (result.rows[0].used) {
-                    return res.status(400).json(utils.errorJSON('Media id already used'));
-                }
-            });
+            const selectResult = await client.execute(selectQuery, values);
+
+            if (!selectResult.rows[0] || selectResult.rows[0].used) {
+                return false;
+            }
 
             // Add media id to question's or answer's media list
             item.media.push(media[i]);
@@ -40,9 +37,9 @@ async function checkValidMedia(media, res, item) {
                 if (err) {
                     console.log('There was an error setting used to true.');
                 } 
-            });
-                  
+            });        
         }
+        return true;
     }
 }
 
@@ -101,7 +98,10 @@ questions.route('/add').all(function (req, res, next) {
             media: []
         };
 
-        checkValidMedia(media, res, question);
+        const valid = await checkValidMedia(media, res, question);
+        if (!valid) {
+            return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
+        }
 
         const data = new Question(question);
         data.save();
@@ -479,7 +479,10 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             upvote_user_ids: {}
         };
 
-        checkValidMedia(media, res, answer);
+        const valid = await checkValidMedia(media, res, answer);
+        if (!valid) {
+            return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
+        }
 
         const data = new Answer(answer);
         data.save();
@@ -497,4 +500,5 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
     });
 
 module.exports = questions;
+
 
