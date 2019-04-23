@@ -44,6 +44,7 @@ login.post('/', async function (req, res) {
         return res.json(utils.okJSON());
     }
     else {
+        console.log('incorrect credentials\n');
         return res.status(400).json(utils.errorJSON('Incorrect credentials'));
     }
 });
