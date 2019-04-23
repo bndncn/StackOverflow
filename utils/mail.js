@@ -9,8 +9,10 @@ function emailKey(email, key) {
         to: email,
         subject: 'Please verify your account',
         html: htmlBody
-    }, function (err, reply) {
-        console.log(err && err.stack);
+    }, function (err) {
+        if (err) {
+            console.log(err && err.stack);
+        }
         // console.dir(reply);
     });
 }
