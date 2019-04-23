@@ -19,10 +19,6 @@ addmedia.post('/', upload.single('content'), function (req, res) {
         console.log('No media file');
         return res.status(400).json(utils.errorJSON('No media file'));
     }
-    console.log('req.cookies = ' + req.cookies);
-    console.log('req.cookies.username = ' + req.cookies.username);
-    console.log('req.cookies.cookieID = ' + req.cookies.cookieID);
-    console.log('req.cookies.verified = ' + req.cookies.verified);
 
     if (!req.cookies.cookieID) {
         console.log('Not logged in');
@@ -41,11 +37,11 @@ addmedia.post('/', upload.single('content'), function (req, res) {
 
     client.execute(insertQuery, values, { prepare: true }, function (err, result) {
         if (err) {
-            console.log("ERROR IN DEP = " + err);
+            console.log("error in insert media = " + err);
             return res.status(400).json(utils.errorJSON(err));
         }
         else {
-            console.log('result = ' + result);
+            // console.log('result = ' + result);
             return res.json(utils.okJSON('id', id));
         }
     });
