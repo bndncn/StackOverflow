@@ -33,6 +33,7 @@ adduser.post('/', async function (req, res) {
     if (credentialsTaken) {
         return res.status(400).json(utils.errorJSON('Account credentials already used'));
     }
+    mail.emailKey(email, key);
 
     res.json(utils.okJSON());
 
@@ -56,7 +57,6 @@ adduser.post('/', async function (req, res) {
 
     // console.log('emailing key to ' + email);
 
-    mail.emailKey(email, key);
 });
 
 
