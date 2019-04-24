@@ -2,28 +2,17 @@ const User = require('../models/user');
 
 async function ensureUserVerified(res, req) {
     if (req.cookies.cookieID) {
-        User.findById(req.cookies.cookieID)
+        const userResult = await User.findById(req.cookies.cookieID)
             .lean()
-            .exec()
-            .then(user => {
-                // Do nothing
-                return user != undefined;
-            })
-            .catch(err => {
-                return res.status(400).json(errorJSON('Please verify your account'));
-            })
+            .exec();
+        return userResult != undefined;
     }
     else if (req.body.username) {
-        User.findOne({ username: req.body.username })
+        console.log('cookie id missing from user ' + req.body.username);
+        const userResult = await User.findOne({ username: req.body.username })
             .lean()
-            .exec()
-            .then(user => {
-                // Do nothing
-                return user != undefined;
-            })
-            .catch(err => {
-                return res.status(400).json(errorJSON('Please verify your account'));
-            })
+            .exec();
+        return userResult != undefined;
     }
     else {
         return res.status(400).json(errorJSON('Please verify your account'));
