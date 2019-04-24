@@ -67,11 +67,15 @@ questions.route('/add').all(function (req, res, next) {
             // console.log('Bad input on /questions/add');
             return res.status(400).json(utils.errorJSON('Bad input on /questions/add'));
         }
+        console.log('\n\naddquestion_cookieID = ' + req.cookies.cookieID);
+        console.log('addquestion_username = ' + req.cookies.username);
+        console.log('addquestion_verified = ' + req.cookies.verified);
 
         if (!req.cookies.cookieID) {
-            // console.log('Not logged in');
+            console.log('Not logged in');
             return res.status(400).json(utils.errorJSON('Not logged in'));
         }
+
         if (!req.cookies.verified) {
             console.log('Please verify');
             return res.status(400).json(utils.errorJSON('Please verify'));
@@ -85,7 +89,7 @@ questions.route('/add').all(function (req, res, next) {
         const media = req.body.media;
         const timestamp = utils.getTimeStamp();
         const id = mongoose.Types.ObjectId();
-        // console.log('user = ' + user_id);
+        console.log('user = ' + user_id);
 
         const question = {
             _id: id,
