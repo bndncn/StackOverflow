@@ -109,9 +109,11 @@ questions.route('/add').all(function (req, res, next) {
             media: []
         };
 
-        const valid = await checkValidMedia(media, res, question, user_id);
-        if (!valid) {
-            return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
+        if (media) {
+            const valid = await checkValidMedia(media, res, question, user_id);
+            if (!valid) {
+                return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
+            }
         }
 
         res.json(utils.okJSON('id', id));
