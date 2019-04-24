@@ -39,8 +39,9 @@ login.post('/', async function (req, res) {
         // console.log('Logging in');
 
         // res.cookie('username', username);
-        res.cookie('cookieID', usernameResult._id);
+
         res.cookie('verified', true);
+        res.cookie('cookieID', usernameResult._id);
         return res.json(utils.okJSON());
     }
     else {
