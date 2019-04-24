@@ -12,7 +12,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Endpoint: /addmedia
-addmedia.post('/', upload.single('content'), function (req, res) {
+addmedia.post('/', upload.single('content'), async function (req, res) {
     console.log('\nAdding media file');
 
     if (!req.file) {
@@ -30,7 +30,12 @@ addmedia.post('/', upload.single('content'), function (req, res) {
     //     console.log('Please verify');
     //     return res.status(400).json(utils.errorJSON('Please verify'));
     // }
-    utils.ensureUserVerified(res, req);
+    const verified = await utils.ensureUserVerified(res, req);
+
+    if (!verified) {
+        console.log('addmedia_ensureUserVerified failed');
+        return res.status(400).json(utils.errorJSON('addmedia_ensureUserVerified failed'));
+    }
 
     const id = mongoose.Types.ObjectId().toString();
     const insertQuery = 'INSERT INTO media (id, userId, content, mimetype, used) VALUES(?,?,?,?,?);';

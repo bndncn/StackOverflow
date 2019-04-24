@@ -1,12 +1,13 @@
 const User = require('../models/user');
 
-function ensureUserVerified(res, req) {
+async function ensureUserVerified(res, req) {
     if (req.cookies.cookieID) {
         User.findById(req.cookies.cookieID)
             .lean()
             .exec()
             .then(user => {
                 // Do nothing
+                return user != undefined;
             })
             .catch(err => {
                 return res.status(400).json(errorJSON('Please verify your account'));
@@ -18,6 +19,7 @@ function ensureUserVerified(res, req) {
             .exec()
             .then(user => {
                 // Do nothing
+                return user != undefined;
             })
             .catch(err => {
                 return res.status(400).json(errorJSON('Please verify your account'));

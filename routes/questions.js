@@ -79,8 +79,13 @@ questions.route('/add').all(function (req, res, next) {
         //     console.log('Please verify');
         //     return res.status(400).json(utils.errorJSON('Please verify'));
         // }
-        utils.ensureUserVerified(res, req);
+        // utils.ensureUserVerified(res, req);
+        const verified = await utils.ensureUserVerified(res, req);
 
+        if (!verified) {
+            console.log('addquestion_ensureUserVerified failed');
+            return res.status(400).json(utils.errorJSON('addquestion_ensureUserVerified failed'));
+        }
         const title = req.body.title;
         const body = req.body.body;
         const tags = req.body.tags;
@@ -328,7 +333,7 @@ questions.route('/:id/upvote').all(function (req, res, next) {
 
     next();
 })
-    .post(function (req, res) {
+    .post(async function (req, res) {
         // console.log('POST to /questions/{id}/upvote');
 
         let upvote = req.body.upvote;
@@ -346,8 +351,13 @@ questions.route('/:id/upvote').all(function (req, res, next) {
         //     console.log('Please verify');
         //     return res.status(400).json(utils.errorJSON('Please verify'));
         // }
-        utils.ensureUserVerified(res, req);
+        // utils.ensureUserVerified(res, req);
+        const verified = await utils.ensureUserVerified(res, req);
 
+        if (!verified) {
+            console.log('upvoteQ_ensureUserVerified failed');
+            return res.status(400).json(utils.errorJSON('upvoteQ_ensureUserVerified failed'));
+        }
         Question.findById(req.params.id)
             .exec()
             .then(question => {
@@ -479,8 +489,14 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
         //     console.log('Please verify');
         //     return res.status(400).json(utils.errorJSON('Please verify'));
         // }
-        utils.ensureUserVerified(res, req);
+        // utils.ensureUserVerified(res, req);
 
+        const verified = await utils.ensureUserVerified(res, req);
+
+        if (!verified) {
+            console.log('addanswer_ensureUserVerified failed');
+            return res.status(400).json(utils.errorJSON('addanswer_ensureUserVerified failed'));
+        }
         const question = await Question.findOne({
             _id: req.params.id,
             answers_user_ids: {

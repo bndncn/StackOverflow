@@ -19,7 +19,7 @@ answers.route('/:id/upvote').all(function (req, res, next) {
 
     next();
 })
-    .post(function (req, res) {
+    .post(async function (req, res) {
         // console.log('POST to /answers/{id}/upvote');
 
         let upvote = req.body.upvote;
@@ -38,7 +38,13 @@ answers.route('/:id/upvote').all(function (req, res, next) {
         //     console.log('Please verify');
         //     return res.status(400).json(utils.errorJSON('Please verify'));
         // }
-        utils.ensureUserVerified(res, req);
+        const verified = await utils.ensureUserVerified(res, req);
+
+        if (!verified) {
+            console.log('upvote_ensureUserVerified failed');
+            return res.status(400).json(utils.errorJSON('upvote_ensureUserVerified failed'));
+        }
+        // utils.ensureUserVerified(res, req);
 
         Answer.findById(req.params.id)
             .exec()
