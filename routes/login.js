@@ -38,10 +38,13 @@ login.post('/', async function (req, res) {
         }
         // console.log('Logging in');
 
-        // res.cookie('username', username);
+        const cookieInfo = {
+            'cookieID': usernameResult._id,
+            'username': username,
+            'verified': true
+        };
 
-        res.cookie('verified', true);
-        res.cookie('cookieID', usernameResult._id);
+        res.cookie('cookieInfo', cookieInfo);
         return res.json(utils.okJSON());
     }
     else {

@@ -20,18 +20,11 @@ logout.post('/', async function (req, res) {
         return res.status(400).json(utils.errorJSON('User with this sessionID does not exist.'));
     }
 
-
-    console.log('cookieID before clearCookie ' + req.cookies.cookieID);
-    res.clearCookie('cookieID');
-    console.log('cookieID after clearCookie ' + req.cookies.cookieID);
-
-    // console.log('username before clearCookie ' + req.cookies.username);
-    // res.clearCookie('username');
-    // console.log('username after clearCookie ' + req.cookies.username);
-
-    console.log('verified before clearCookie ' + req.cookies.verified);
-    res.clearCookie('verified');
-    console.log('verified after clearCookie ' + req.cookies.verified);
+    console.log(res.cookie.cookieInfo);
+    console.log(JSON.parse(res.cookie.cookieInfo).username);
+    console.log(JSON.parse(res.cookie.cookieInfo).cookieID);
+    console.log(JSON.parse(res.cookie.cookieInfo).verified);
+    res.clearCookie('cookieInfo');
 
     return res.json(utils.okJSON());
 });
