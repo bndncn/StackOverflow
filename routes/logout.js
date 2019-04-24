@@ -24,6 +24,7 @@ logout.post('/', async function (req, res) {
 
     res.clearCookie('cookieID');
     res.clearCookie('username');
+    res.clearCookie('verified');
     return res.json(utils.okJSON());
 });
 
