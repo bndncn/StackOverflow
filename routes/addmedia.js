@@ -32,8 +32,8 @@ addmedia.post('/', upload.single('content'), function (req, res) {
     // utils.ensureUserVerified(res, req);
 
     const id = mongoose.Types.ObjectId().toString();
-    const insertQuery = 'INSERT INTO media (id, content, mimetype, used) VALUES(?,?,?,?);';
-    const values = [id, req.file.buffer, req.file.mimetype, false];
+    const insertQuery = 'INSERT INTO media (id, userId, content, mimetype, used) VALUES(?,?,?,?,?);';
+    const values = [id, req.cookies.cookieID, req.file.buffer, req.file.mimetype, false];
 
     client.execute(insertQuery, values, { prepare: true }, function (err, result) {
         if (err) {

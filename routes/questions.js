@@ -12,7 +12,7 @@ const Answer = require('../models/answer');
 
 const questions = express.Router();
 
-async function checkValidMedia(media, res, item) {
+async function checkValidMedia(media, res, item, userId) {
     if (media) {
         const selectQuery = 'SELECT used FROM media WHERE id=?;';
         for (let i = 0; i < media.length; i++) {
@@ -20,7 +20,7 @@ async function checkValidMedia(media, res, item) {
 
             const selectResult = await client.execute(selectQuery, values);
 
-            if (!selectResult.rows[0] || selectResult.rows[0].used) {
+            if (!selectResult.rows[0] || selectResult.rows[0].used || selectResult.rows[0].userId !== userId) {
                 return false;
             }
 
@@ -101,7 +101,7 @@ questions.route('/add').all(function (req, res, next) {
             media: []
         };
 
-        const valid = await checkValidMedia(media, res, question);
+        const valid = await checkValidMedia(media, res, question, user_id);
         if (!valid) {
             return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
         }
@@ -505,7 +505,7 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             upvote_user_ids: {}
         };
 
-        const valid = await checkValidMedia(media, res, answer);
+        const valid = await checkValidMedia(media, res, answer, user_id);
         if (!valid) {
             return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
         }
