@@ -34,16 +34,16 @@ answers.route('/:id/upvote').all(function (req, res, next) {
             return res.status(400).json(utils.errorJSON());
         }
 
-        // if (!req.cookies.verified) {
-        //     console.log('Please verify');
-        //     return res.status(400).json(utils.errorJSON('Please verify'));
-        // }
-        const verified = await utils.ensureUserVerified(res, req);
-
-        if (!verified) {
-            console.log('upvote_ensureUserVerified failed');
-            return res.status(400).json(utils.errorJSON('upvote_ensureUserVerified failed'));
+        if (!req.cookies.verified) {
+            console.log('upvA :Please verify');
+            return res.status(400).json(utils.errorJSON('Please verify'));
         }
+        // const verified = await utils.ensureUserVerified(res, req);
+
+        // if (!verified) {
+        //     console.log('upvote_ensureUserVerified failed');
+        //     return res.status(400).json(utils.errorJSON('upvote_ensureUserVerified failed'));
+        // }
         // utils.ensureUserVerified(res, req);
 
         Answer.findById(req.params.id)

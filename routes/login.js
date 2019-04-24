@@ -40,7 +40,7 @@ login.post('/', async function (req, res) {
 
         // res.cookie('username', username);
         res.cookie('cookieID', usernameResult._id);
-        // res.cookie('verified', true);
+        res.cookie('verified', true);
         return res.json(utils.okJSON());
     }
     else {

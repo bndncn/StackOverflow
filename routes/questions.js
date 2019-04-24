@@ -75,17 +75,17 @@ questions.route('/add').all(function (req, res, next) {
             return res.status(400).json(utils.errorJSON('Not logged in'));
         }
 
-        // if (!req.cookies.verified) {
-        //     console.log('Please verify');
-        //     return res.status(400).json(utils.errorJSON('Please verify'));
-        // }
-        // utils.ensureUserVerified(res, req);
-        const verified = await utils.ensureUserVerified(res, req);
-
-        if (!verified) {
-            console.log('addquestion_ensureUserVerified failed');
-            return res.status(400).json(utils.errorJSON('addquestion_ensureUserVerified failed'));
+        if (!req.cookies.verified) {
+            console.log('addQ: Please verify');
+            return res.status(400).json(utils.errorJSON('Please verify'));
         }
+        // utils.ensureUserVerified(res, req);
+        // const verified = await utils.ensureUserVerified(res, req);
+
+        // if (!verified) {
+        //     console.log('addquestion_ensureUserVerified failed');
+        //     return res.status(400).json(utils.errorJSON('addquestion_ensureUserVerified failed'));
+        // }
         const title = req.body.title;
         const body = req.body.body;
         const tags = req.body.tags;
@@ -349,17 +349,18 @@ questions.route('/:id/upvote').all(function (req, res, next) {
             // console.log('Not logged in');
             return res.status(400).json(utils.errorJSON());
         }
-        // if (!req.cookies.verified) {
-        //     console.log('Please verify');
-        //     return res.status(400).json(utils.errorJSON('Please verify'));
-        // }
-        // utils.ensureUserVerified(res, req);
-        const verified = await utils.ensureUserVerified(res, req);
-
-        if (!verified) {
-            console.log('upvoteQ_ensureUserVerified failed');
-            return res.status(400).json(utils.errorJSON('upvoteQ_ensureUserVerified failed'));
+        if (!req.cookies.verified) {
+            console.log('upvote: Please verify');
+            return res.status(400).json(utils.errorJSON('Please verify'));
         }
+        // utils.ensureUserVerified(res, req);
+        // const verified = await utils.ensureUserVerified(res, req);
+
+        // if (!verified) {
+        //     console.log('upvoteQ_ensureUserVerified failed');
+        //     return res.status(400).json(utils.errorJSON('upvoteQ_ensureUserVerified failed'));
+        // }
+
         Question.findById(req.params.id)
             .exec()
             .then(question => {
@@ -492,18 +493,18 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
         //     // console.log('Not logged in');
         //     return res.status(400).json(utils.errorJSON('Not logged in'));
         // }
-        // if (!req.cookies.verified) {
-        //     console.log('Please verify');
-        //     return res.status(400).json(utils.errorJSON('Please verify'));
-        // }
+        if (!req.cookies.verified) {
+            console.log('addA: Please verify');
+            return res.status(400).json(utils.errorJSON('Please verify'));
+        }
         // utils.ensureUserVerified(res, req);
 
-        const verified = await utils.ensureUserVerified(res, req);
+        // const verified = await utils.ensureUserVerified(res, req);
 
-        if (!verified) {
-            console.log('addanswer_ensureUserVerified failed');
-            return res.status(400).json(utils.errorJSON('addanswer_ensureUserVerified failed'));
-        }
+        // if (!verified) {
+        //     console.log('addanswer_ensureUserVerified failed');
+        //     return res.status(400).json(utils.errorJSON('addanswer_ensureUserVerified failed'));
+        // }
         const question = await Question.findOne({
             _id: req.params.id,
             answers_user_ids: {

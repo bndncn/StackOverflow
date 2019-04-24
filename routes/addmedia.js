@@ -26,16 +26,15 @@ addmedia.post('/', upload.single('content'), async function (req, res) {
         return res.status(400).json(utils.errorJSON('Not logged in'));
     }
 
-    // if (!req.cookies.verified) {
-    //     console.log('Please verify');
-    //     return res.status(400).json(utils.errorJSON('Please verify'));
-    // }
-    const verified = await utils.ensureUserVerified(res, req);
-
-    if (!verified) {
-        console.log('addmedia_ensureUserVerified failed');
-        return res.status(400).json(utils.errorJSON('addmedia_ensureUserVerified failed'));
+    if (!req.cookies.verified) {
+        console.log('addmedia: Please verify');
+        return res.status(400).json(utils.errorJSON('Please verify'));
     }
+    // const verified = await utils.ensureUserVerified(res, req);
+    // if (!verified) {
+    //     console.log('addmedia_ensureUserVerified failed');
+    //     return res.status(400).json(utils.errorJSON('addmedia_ensureUserVerified failed'));
+    // }
 
     const id = mongoose.Types.ObjectId().toString();
     const insertQuery = 'INSERT INTO media (id, userId, content, mimetype, used) VALUES(?,?,?,?,?);';
