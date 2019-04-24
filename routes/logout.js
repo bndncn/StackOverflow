@@ -8,7 +8,7 @@ const logout = express.Router();
 logout.post('/', async function (req, res) {
     console.log('\n\nPOST on logout');
 
-    if (!req.cookies || !req.cookies.cookieID || !req.cookies.username) {
+    if (!req.cookies || !req.cookies.cookieID) {
         console.log('No cookies on logout');
         return res.status(400).json(utils.errorJSON('Missing cookies'));
     }
@@ -25,9 +25,9 @@ logout.post('/', async function (req, res) {
     res.clearCookie('cookieID');
     console.log('cookieID after clearCookie ' + req.cookies.cookieID);
 
-    console.log('username before clearCookie ' + req.cookies.username);
-    res.clearCookie('username');
-    console.log('username after clearCookie ' + req.cookies.username);
+    // console.log('username before clearCookie ' + req.cookies.username);
+    // res.clearCookie('username');
+    // console.log('username after clearCookie ' + req.cookies.username);
 
     // console.log('verified before clearCookie ' + req.cookies.verified);
     // res.clearCookie('verified');

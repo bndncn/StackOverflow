@@ -38,8 +38,8 @@ login.post('/', async function (req, res) {
         }
         // console.log('Logging in');
 
+        // res.cookie('username', username);
         res.cookie('cookieID', usernameResult._id);
-        res.cookie('username', username);
         // res.cookie('verified', true);
         return res.json(utils.okJSON());
     }

@@ -68,7 +68,7 @@ questions.route('/add').all(function (req, res, next) {
             return res.status(400).json(utils.errorJSON('Bad input on /questions/add'));
         }
         console.log('addQuestion_cookieID = ' + req.cookies.cookieID);
-        console.log('addQuestion_username = ' + req.cookies.username);
+        // console.log('addQuestion_username = ' + req.cookies.username);
 
         if (!req.cookies.cookieID) {
             console.log('addQuestion: Not logged in');
@@ -480,13 +480,18 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
         const body = req.body.body;
         const media = req.body.media;
         const user_id = req.cookies.cookieID;
-        const username = req.cookies.username;
         // const cookieID = req.cookies.cookieID;
-
-        if (!user_id || !username) {
-            // console.log('Not logged in');
+        const userResult = await User.findById(user_id).lean().exec();
+        if (!userResult) {
             return res.status(400).json(utils.errorJSON('Not logged in'));
         }
+
+        const username = userResult.username;
+
+        // if (!user_id || !username) {
+        //     // console.log('Not logged in');
+        //     return res.status(400).json(utils.errorJSON('Not logged in'));
+        // }
         // if (!req.cookies.verified) {
         //     console.log('Please verify');
         //     return res.status(400).json(utils.errorJSON('Please verify'));
