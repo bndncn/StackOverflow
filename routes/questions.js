@@ -526,9 +526,11 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             upvote_user_ids: {}
         };
 
-        const valid = await checkValidMedia(media, res, answer, user_id);
-        if (!valid) {
-            return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
+        if (media) {
+            const valid = await checkValidMedia(media, res, answer, user_id);
+            if (!valid) {
+                return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
+            }
         }
         res.json(utils.okJSON('id', id));
 
