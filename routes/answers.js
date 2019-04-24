@@ -20,7 +20,12 @@ answers.route('/:id/upvote').all(function (req, res, next) {
     next();
 })
     .post(async function (req, res) {
-        // console.log('POST to /answers/{id}/upvote');
+        console.log('POST to /answers/{id}/upvote');
+        console.log('upvans_cookieID = ' + req.cookies.cookieID);
+        console.log('upvans_verified = ' + req.cookies.verified);
+        if (!utils.ensureUserVerified(req, res)) {
+            return res.status(400).json(utils.errorJSON('upvans_ensureUserVerified failed'));
+        }
 
         let upvote = req.body.upvote;
         const cookieID = req.cookies.cookieID;
@@ -29,15 +34,16 @@ answers.route('/:id/upvote').all(function (req, res, next) {
             upvote = true;
         }
 
-        if (!cookieID) {
-            // console.log('Not logged in');
-            return res.status(400).json(utils.errorJSON());
-        }
 
-        if (!req.cookies.verified) {
-            console.log('upvA :Please verify');
-            return res.status(400).json(utils.errorJSON('Please verify'));
-        }
+        // if (!cookieID) {
+        //     // console.log('Not logged in');
+        //     return res.status(400).json(utils.errorJSON());
+        // }
+
+        // if (!req.cookies.verified) {
+        //     console.log('upvA :Please verify');
+        //     return res.status(400).json(utils.errorJSON('Please verify'));
+        // }
         // const verified = await utils.ensureUserVerified(res, req);
 
         // if (!verified) {

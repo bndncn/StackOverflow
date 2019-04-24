@@ -12,24 +12,28 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Endpoint: /addmedia
-addmedia.post('/', upload.single('content'), async function (req, res) {
+addmedia.post('/', upload.single('content'), function (req, res) {
     console.log('\nAdding media file');
 
     if (!req.file) {
         console.log('No media file');
         return res.status(400).json(utils.errorJSON('No media file'));
     }
-    // console.log('\ncookieID = ' + req.cookies.cookieID);
-
-    if (!req.cookies.cookieID) {
-        console.log('addMedia: Not logged in');
-        return res.status(400).json(utils.errorJSON('Not logged in'));
+    console.log('addmedia_cookieID = ' + req.cookies.cookieID);
+    console.log('addmedia_verified = ' + req.cookies.verified);
+    if (!utils.ensureUserVerified(req, res)) {
+        return res.status(400).json(utils.errorJSON('addmedia_ensureUserVerified failed'));
     }
 
-    if (!req.cookies.verified) {
-        console.log('addmedia: Please verify');
-        return res.status(400).json(utils.errorJSON('Please verify'));
-    }
+    // if (!req.cookies.cookieID) {
+    //     console.log('addMedia: Not logged in');
+    //     return res.status(400).json(utils.errorJSON('Not logged in'));
+    // }
+
+    // if (!req.cookies.verified) {
+    //     console.log('addmedia: Please verify');
+    //     return res.status(400).json(utils.errorJSON('Please verify'));
+    // }
     // const verified = await utils.ensureUserVerified(res, req);
     // if (!verified) {
     //     console.log('addmedia_ensureUserVerified failed');

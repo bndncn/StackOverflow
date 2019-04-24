@@ -61,24 +61,32 @@ questions.route('/add').all(function (req, res, next) {
     next();
 })
     .post(async function (req, res) {
-        console.log('\n\nPOST to /questions/add');
+        console.log();
+        console.log('POST to /questions/add');
 
         if (!req.body || !req.body.title || !req.body.body || !req.body.tags) {
             // console.log('Bad input on /questions/add');
             return res.status(400).json(utils.errorJSON('Bad input on /questions/add'));
         }
+
         console.log('addQuestion_cookieID = ' + req.cookies.cookieID);
-        // console.log('addQuestion_username = ' + req.cookies.username);
-
-        if (!req.cookies.cookieID) {
-            console.log('addQuestion: Not logged in');
-            return res.status(400).json(utils.errorJSON('Not logged in'));
+        console.log('addQuestion_verified = ' + req.cookies.verified);
+        if (!utils.ensureUserVerified(req, res)) {
+            return res.status(400).json(utils.errorJSON('upvans_ensureUserVerified failed'));
         }
+        // console.log('addQuestion_cookieID = ' + req.cookies.cookieID);
+        // console.log('addQuestion_verified = ' + req.cookies.verified);
+        // // console.log('addQuestion_username = ' + req.cookies.username);
 
-        if (!req.cookies.verified) {
-            console.log('addQ: Please verify');
-            return res.status(400).json(utils.errorJSON('Please verify'));
-        }
+        // if (!req.cookies.cookieID) {
+        //     console.log('addQuestion: Not logged in');
+        //     return res.status(400).json(utils.errorJSON('Not logged in'));
+        // }
+
+        // if (!req.cookies.verified) {
+        //     console.log('addQ: Please verify');
+        //     return res.status(400).json(utils.errorJSON('Please verify'));
+        // }
         // utils.ensureUserVerified(res, req);
         // const verified = await utils.ensureUserVerified(res, req);
 
@@ -110,6 +118,7 @@ questions.route('/add').all(function (req, res, next) {
         };
 
         if (media) {
+            console.log('media found');
             const valid = await checkValidMedia(media, res, question, user_id);
             if (!valid) {
                 return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
@@ -477,6 +486,11 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
 })
     .post(async function (req, res) {
         // console.log('POST to /questions/{id}/answers/add');
+        console.log('addans_cookieID = ' + req.cookies.cookieID);
+        console.log('addans_verified = ' + req.cookies.verified);
+        if (!utils.ensureUserVerified(req, res)) {
+            return res.status(400).json(utils.errorJSON('addans_ensureUserVerified failed'));
+        }
 
         const body = req.body.body;
         const media = req.body.media;
@@ -493,10 +507,10 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
         //     // console.log('Not logged in');
         //     return res.status(400).json(utils.errorJSON('Not logged in'));
         // }
-        if (!req.cookies.verified) {
-            console.log('addA: Please verify');
-            return res.status(400).json(utils.errorJSON('Please verify'));
-        }
+        // if (!req.cookies.verified) {
+        //     console.log('addA: Please verify');
+        //     return res.status(400).json(utils.errorJSON('Please verify'));
+        // }
         // utils.ensureUserVerified(res, req);
 
         // const verified = await utils.ensureUserVerified(res, req);
