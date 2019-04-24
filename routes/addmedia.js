@@ -13,7 +13,7 @@ const upload = multer({ storage: storage });
 
 // Endpoint: /addmedia
 addmedia.post('/', upload.single('content'), function (req, res) {
-    console.log('Adding media file');
+    console.log('\nAdding media file');
 
     if (!req.file) {
         console.log('No media file');
@@ -22,15 +22,15 @@ addmedia.post('/', upload.single('content'), function (req, res) {
     // console.log('\ncookieID = ' + req.cookies.cookieID);
 
     if (!req.cookies.cookieID) {
-        console.log('Not logged in');
+        console.log('addMedia: Not logged in');
         return res.status(400).json(utils.errorJSON('Not logged in'));
     }
 
-    if (!req.cookies.verified) {
-        console.log('Please verify');
-        return res.status(400).json(utils.errorJSON('Please verify'));
-    }
-    // utils.ensureUserVerified(res, req);
+    // if (!req.cookies.verified) {
+    //     console.log('Please verify');
+    //     return res.status(400).json(utils.errorJSON('Please verify'));
+    // }
+    utils.ensureUserVerified(res, req);
 
     const id = mongoose.Types.ObjectId().toString();
     const insertQuery = 'INSERT INTO media (id, userId, content, mimetype, used) VALUES(?,?,?,?,?);';
