@@ -28,7 +28,7 @@ async function checkValidMedia(media, res, item, userId) {
                 console.log('media already used');
                 return false;
             }
-            if (selectResult.rows[0].userId !== userId) {
+            if (selectResult.rows[0].userId !== userId.toString()) {
                 console.log('selected userId !== userId');
                 return false;
             }
