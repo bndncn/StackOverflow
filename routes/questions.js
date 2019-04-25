@@ -29,7 +29,7 @@ async function checkValidMedia(media, res, item, userId) {
                 return false;
             }
             if (selectResult.rows[0].userId !== userId) {
-                console.log('selected userId !== userId');
+                console.log('selected userId: ' + selectResult.rows[0].userId + ' !== ' + userId);
                 return false;
             }
 
