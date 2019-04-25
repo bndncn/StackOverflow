@@ -40,6 +40,8 @@ async function checkValidMedia(media, res, item, userId) {
             });
         }
         return true;
+    } else {
+        console.log('undefined media given!');
     }
 }
 
@@ -65,11 +67,12 @@ questions.route('/add').all(function (req, res, next) {
         console.log('POST to /questions/add');
 
         if (!req.body || !req.body.title || !req.body.body || !req.body.tags) {
-            // console.log('Bad input on /questions/add');
+            console.log('Bad input on /questions/add');
             return res.status(400).json(utils.errorJSON('Bad input on /questions/add'));
         }
         console.log('addQuestion_cookieID = ' + req.cookies.cookieID);
         if (!req.cookies.cookieID) {
+            console.log('addquestion: pls log in or verify');
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
 
@@ -120,7 +123,10 @@ questions.route('/add').all(function (req, res, next) {
             console.log('media found');
             const valid = await checkValidMedia(media, res, question, user_id);
             if (!valid) {
+                console.log('addquestion: invalid media!');
                 return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
+            } else {
+                console.log('addquestion: valid media');
             }
         }
 
@@ -552,6 +558,7 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
         if (media) {
             const valid = await checkValidMedia(media, res, answer, user_id);
             if (!valid) {
+                console.log('invalid media!');
                 return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
             }
         }

@@ -21,6 +21,7 @@ addmedia.post('/', upload.single('content'), function (req, res) {
     }
     console.log('addmedia_cookieID = ' + req.cookies.cookieID);
     if (!req.cookies.cookieID) {
+        console.log('addmedia: pls lot in');
         return res.status(400).json(utils.errorJSON('Please log in or verify'));
     }
     // console.log('addmedia_verified = ' + req.cookies.verified);
