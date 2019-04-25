@@ -68,12 +68,11 @@ questions.route('/add').all(function (req, res, next) {
             // console.log('Bad input on /questions/add');
             return res.status(400).json(utils.errorJSON('Bad input on /questions/add'));
         }
-
         console.log('addQuestion_cookieID = ' + req.cookies.cookieID);
-        console.log('addQuestion_verified = ' + req.cookies.verified);
-        if (!utils.ensureUserVerified(req, res)) {
-            return res.status(400).json(utils.errorJSON('upvans_ensureUserVerified failed'));
+        if (!req.cookies.cookieID) {
+            return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
+
         // console.log('addQuestion_cookieID = ' + req.cookies.cookieID);
         // console.log('addQuestion_verified = ' + req.cookies.verified);
         // // console.log('addQuestion_username = ' + req.cookies.username);
@@ -487,10 +486,14 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
     .post(async function (req, res) {
         // console.log('POST to /questions/{id}/answers/add');
         console.log('addans_cookieID = ' + req.cookies.cookieID);
-        console.log('addans_verified = ' + req.cookies.verified);
-        if (!utils.ensureUserVerified(req, res)) {
-            return res.status(400).json(utils.errorJSON('addans_ensureUserVerified failed'));
+        if (!req.cookies.cookieID) {
+            return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
+        // console.log('addans_cookieID = ' + req.cookies.cookieID);
+        // console.log('addans_verified = ' + req.cookies.verified);
+        // if (!utils.ensureUserVerified(req, res)) {
+        //     return res.status(400).json(utils.errorJSON('addans_ensureUserVerified failed'));
+        // }
 
         const body = req.body.body;
         const media = req.body.media;

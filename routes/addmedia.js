@@ -20,10 +20,13 @@ addmedia.post('/', upload.single('content'), function (req, res) {
         return res.status(400).json(utils.errorJSON('No media file'));
     }
     console.log('addmedia_cookieID = ' + req.cookies.cookieID);
-    console.log('addmedia_verified = ' + req.cookies.verified);
-    if (!utils.ensureUserVerified(req, res)) {
-        return res.status(400).json(utils.errorJSON('addmedia_ensureUserVerified failed'));
+    if (!req.cookies.cookieID) {
+        return res.status(400).json(utils.errorJSON('Please log in or verify'));
     }
+    // console.log('addmedia_verified = ' + req.cookies.verified);
+    // if (!utils.ensureUserVerified(req, res)) {
+    //     return res.status(400).json(utils.errorJSON('addmedia_ensureUserVerified failed'));
+    // }
 
     // if (!req.cookies.cookieID) {
     //     console.log('addMedia: Not logged in');

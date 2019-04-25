@@ -21,11 +21,15 @@ answers.route('/:id/upvote').all(function (req, res, next) {
 })
     .post(async function (req, res) {
         console.log('POST to /answers/{id}/upvote');
-        console.log('upvans_cookieID = ' + req.cookies.cookieID);
-        console.log('upvans_verified = ' + req.cookies.verified);
-        if (!utils.ensureUserVerified(req, res)) {
-            return res.status(400).json(utils.errorJSON('upvans_ensureUserVerified failed'));
+        console.log('upvote_cookieID = ' + req.cookies.cookieID);
+        if (!req.cookies.cookieID) {
+            return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
+        // console.log('upvans_cookieID = ' + req.cookies.cookieID);
+        // console.log('upvans_verified = ' + req.cookies.verified);
+        // if (!utils.ensureUserVerified(req, res)) {
+        //     return res.status(400).json(utils.errorJSON('upvans_ensureUserVerified failed'));
+        // }
 
         let upvote = req.body.upvote;
         const cookieID = req.cookies.cookieID;

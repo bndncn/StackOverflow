@@ -29,9 +29,9 @@ logout.post('/', async function (req, res) {
     // res.clearCookie('username');
     // console.log('username after clearCookie ' + req.cookies.username);
 
-    console.log('verified before clearCookie ' + req.cookies.verified);
-    res.clearCookie('verified');
-    console.log('verified after clearCookie ' + req.cookies.verified);
+    // console.log('verified before clearCookie ' + req.cookies.verified);
+    // res.clearCookie('verified');
+    // console.log('verified after clearCookie ' + req.cookies.verified);
 
     return res.json(utils.okJSON());
 });
