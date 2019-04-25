@@ -14,13 +14,22 @@ const questions = express.Router();
 
 async function checkValidMedia(media, res, item, userId) {
     if (media) {
-        const selectQuery = 'SELECT used FROM media WHERE id=?;';
+        const selectQuery = 'SELECT used, userId FROM media WHERE id=?;';
         for (let i = 0; i < media.length; i++) {
             const values = [media[i]];
 
             const selectResult = await client.execute(selectQuery, values);
 
-            if (!selectResult.rows[0] || selectResult.rows[0].used || selectResult.rows[0].userId !== userId) {
+            if (!selectResult.rows[0]) {
+                console.log('no media found');
+                return false;
+            }
+            if (selectResult.rows[0].used) {
+                console.log('media already used');
+                return false;
+            }
+            if (selectResult.rows[0].userId !== userId) {
+                console.log('selected userId !== userId');
                 return false;
             }
 
@@ -39,10 +48,8 @@ async function checkValidMedia(media, res, item, userId) {
                 }
             });
         }
-        return true;
-    } else {
-        console.log('undefined media given!');
     }
+    return true;
 }
 
 // Endpoint: /questions
@@ -103,7 +110,7 @@ questions.route('/add').all(function (req, res, next) {
         const media = req.body.media;
         const timestamp = utils.getTimeStamp();
         const id = mongoose.Types.ObjectId();
-        console.log('user = ' + user_id);
+        // console.log('user = ' + user_id);
 
         const question = {
             _id: id,
@@ -119,15 +126,12 @@ questions.route('/add').all(function (req, res, next) {
             media: []
         };
 
-        if (media) {
-            console.log('media found');
-            const valid = await checkValidMedia(media, res, question, user_id);
-            if (!valid) {
-                console.log('addquestion: invalid media!');
-                return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
-            } else {
-                console.log('addquestion: valid media');
-            }
+        const valid = await checkValidMedia(media, res, question, user_id);
+        if (!valid) {
+            console.log('addquestion: invalid media!');
+            return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
+        } else {
+            // console.log('addquestion: valid media');
         }
 
         res.json(utils.okJSON('id', id));
@@ -555,12 +559,10 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             upvote_user_ids: {}
         };
 
-        if (media) {
-            const valid = await checkValidMedia(media, res, answer, user_id);
-            if (!valid) {
-                console.log('invalid media!');
-                return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
-            }
+        const valid = await checkValidMedia(media, res, answer, user_id);
+        if (!valid) {
+            console.log('invalid media!');
+            return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
         }
         res.json(utils.okJSON('id', id));
 
