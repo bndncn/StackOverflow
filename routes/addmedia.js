@@ -19,7 +19,7 @@ addmedia.post('/', upload.single('content'), function (req, res) {
         console.log('No media file');
         return res.status(400).json(utils.errorJSON('No media file'));
     }
-    console.log('addmedia_cookieID = ' + req.cookies.cookieID);
+    // console.log('addmedia_cookieID = ' + req.cookies.cookieID);
     if (!req.cookies.cookieID) {
         console.log('addmedia: pls lot in');
         return res.status(400).json(utils.errorJSON('Please log in or verify'));

@@ -63,14 +63,14 @@ questions.route('/add').all(function (req, res, next) {
     next();
 })
     .post(async function (req, res) {
-        console.log();
-        console.log('POST to /questions/add');
+        // console.log();
+        // console.log('POST to /questions/add');
 
         if (!req.body || !req.body.title || !req.body.body || !req.body.tags) {
             console.log('Bad input on /questions/add');
             return res.status(400).json(utils.errorJSON('Bad input on /questions/add'));
         }
-        console.log('addQuestion_cookieID = ' + req.cookies.cookieID);
+        // console.log('addQuestion_cookieID = ' + req.cookies.cookieID);
         if (!req.cookies.cookieID) {
             console.log('addquestion: pls log in or verify');
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
