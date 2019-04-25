@@ -28,7 +28,7 @@ async function checkValidMedia(media, res, item, userId) {
                 console.log('media already used');
                 return false;
             }
-            if (selectResult.rows[0].userId !== userId.toString()) {
+            if (selectResult.rows[0].userId !== userId) {
                 console.log('selected userId !== userId');
                 return false;
             }
@@ -126,7 +126,7 @@ questions.route('/add').all(function (req, res, next) {
             media: []
         };
 
-        const valid = await checkValidMedia(media, res, question, user_id);
+        const valid = await checkValidMedia(media, res, question, user_id.toString());
         if (!valid) {
             console.log('addquestion: invalid media!');
             return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
