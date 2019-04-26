@@ -36,17 +36,18 @@ async function checkValidMedia(media, res, item, userid) {
             // Add media id to question's or answer's media list
             item.media.push(media[i]);
         }
-        const updateQuery = 'UPDATE media SET used = ? WHERE id=?';
+        const updateQuery = 'UPDATE media SET used = True WHERE id IN ' + tagValues;
+        client.execute(updateQuery);
         // If all media ids aren't used and exist
-        for (let i = 0; i < item.media.length; i++) {
-            const values = [true, media[i]];
-            // Set media to used
-            client.execute(updateQuery, values, function (err, result) {
-                if (err) {
-                    console.log('There was an error setting used to true.');
-                }
-            });
-        }
+        // for (let i = 0; i < media.length; i++) {
+        //     const values = [true, media[i]];
+        //     // Set media to used
+        //     client.execute(updateQuery, values, function (err, result) {
+        //         if (err) {
+        //             console.log('There was an error setting used to true.');
+        //         }
+        //     });
+        // }
     }
     return true;
 }
