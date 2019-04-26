@@ -7,8 +7,6 @@ const verify = express.Router();
 
 // Endpoint: /verify
 verify.post('/', async function (req, res) {
-    // console.log('Checking Verification Email');
-
     const email = req.body.email;
     const key = req.body.key;
 
@@ -20,7 +18,6 @@ verify.post('/', async function (req, res) {
 
     // If email is not registered
     if (!emailResult) {
-        // console.log(email + ' has not been registered.');
         return res.status(404).json(utils.errorJSON(email + ' has not been registered.'));
     }
 
@@ -29,10 +26,8 @@ verify.post('/', async function (req, res) {
 
         emailResult.verified = true;
         emailResult.save();
-        // console.log(email + " has been successfully verified");
     }
     else {
-        // console.log('Failed to Validate');
         return res.status(404).json(utils.errorJSON('Failed to Validate'));
     }
 });

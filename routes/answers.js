@@ -10,10 +10,8 @@ const answers = express.Router();
 
 // Endpoint: /answers/{id}/upvote
 answers.route('/:id/upvote').all(function (req, res, next) {
-    // console.log('/answers/{id}/upvote');
-
+    console.log('/answers/{id}/upvote');
     if (!req.params.id || !validator.isMongoId(req.params.id)) {
-        // console.log('Bad input on /answers/:id/upvote');
         return res.status(400).json(utils.errorJSON());
     }
 
@@ -21,15 +19,9 @@ answers.route('/:id/upvote').all(function (req, res, next) {
 })
     .post(async function (req, res) {
         console.log('POST to /answers/{id}/upvote');
-        console.log('upvote_cookieID = ' + req.cookies.cookieID);
         if (!req.cookies.cookieID) {
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
-        // console.log('upvans_cookieID = ' + req.cookies.cookieID);
-        // console.log('upvans_verified = ' + req.cookies.verified);
-        // if (!utils.ensureUserVerified(req, res)) {
-        //     return res.status(400).json(utils.errorJSON('upvans_ensureUserVerified failed'));
-        // }
 
         let upvote = req.body.upvote;
         const cookieID = req.cookies.cookieID;
@@ -37,24 +29,6 @@ answers.route('/:id/upvote').all(function (req, res, next) {
         if (upvote === undefined) {
             upvote = true;
         }
-
-
-        // if (!cookieID) {
-        //     // console.log('Not logged in');
-        //     return res.status(400).json(utils.errorJSON());
-        // }
-
-        // if (!req.cookies.verified) {
-        //     console.log('upvA :Please verify');
-        //     return res.status(400).json(utils.errorJSON('Please verify'));
-        // }
-        // const verified = await utils.ensureUserVerified(res, req);
-
-        // if (!verified) {
-        //     console.log('upvote_ensureUserVerified failed');
-        //     return res.status(400).json(utils.errorJSON('upvote_ensureUserVerified failed'));
-        // }
-        // utils.ensureUserVerified(res, req);
 
         Answer.findById(req.params.id)
             .exec()
@@ -137,16 +111,6 @@ answers.route('/:id/upvote').all(function (req, res, next) {
                         }
                         answer.save();
                         user.save();
-                        // answer.save(function (err) {
-                        // if (err) {
-                        // console.log('err saving answer = ' + err);
-                        // }
-                        // });
-                        // user.save(function (err) {
-                        // if (err) {
-                        // console.log('err saving user = ' + err);
-                        // }
-                        // });
                     }).catch(err => {
                         // console.log('upvote err = ' + err);
                         return res.status(404).json(utils.errorJSON(err));
@@ -160,11 +124,10 @@ answers.route('/:id/upvote').all(function (req, res, next) {
 
 // Endpoint: /answers/{id}/accept
 answers.route('/:id/accept').all(function (req, res, next) {
-    // console.log('/answers/{id}/accept');
     next();
 })
     .post(function (req, res) {
-        // console.log('POST to /answers/{id}/accept');
+        console.log('POST to /answers/{id}/accept');
 
         Answer.findById(req.params.id)
             .exec()
@@ -202,18 +165,6 @@ answers.route('/:id/accept').all(function (req, res, next) {
 
                         question.save();
                         answer.save();
-                        // question.save(function (err) {
-                        //     if (err) {
-                        //         console.log('err saving q ' + err);
-                        //         return res.status(400).json(utils.errorJSON());
-                        //     }
-                        // });
-                        // answer.save(function (err) {
-                        //     if (err) {
-                        //         console.log('err saving a ' + err);
-                        //         return res.status(400).json(utils.errorJSON());
-                        //     }
-                        // });
                     })
                     .catch(err => {
                         console.log('err find answer by id = ' + err);

@@ -13,7 +13,6 @@ function textSearch(query, questions) {
         const questionText = title + ' ' + body;
 
         if (containsWord(query, questionText)) {
-            // console.log('\n\n\npushing question with title = ' + title);
             searchResults.push(question);
         }
     });

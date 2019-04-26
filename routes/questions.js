@@ -65,18 +65,15 @@ questions.route('/').all(function (req, res, next) {
 
 // Endpoint: /questions/add
 questions.route('/add').all(function (req, res, next) {
-    // console.log('/questions/add');
     next();
 })
     .post(async function (req, res) {
-        // console.log();
-        // console.log('POST to /questions/add');
 
         if (!req.body || !req.body.title || !req.body.body || !req.body.tags) {
             console.log('Bad input on /questions/add');
             return res.status(400).json(utils.errorJSON('Bad input on /questions/add'));
         }
-        // console.log('addQuestion_cookieID = ' + req.cookies.cookieID);
+
         if (!req.cookies.cookieID) {
             console.log('addquestion: pls log in or verify');
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
@@ -150,8 +147,6 @@ questions.route('/:id').all(function (req, res, next) {
         // if previously viewed
         const already_viewed = user_viewed || ip_viewed;
 
-        // console.log('already_viewed = ' + already_viewed);
-
         question.populate({
             path: 'user_id',
             select: '-_id username reputation',
@@ -224,18 +219,6 @@ questions.route('/:id').all(function (req, res, next) {
                     console.log('Error deleting media');
                 }
             });
-
-            // question.media.forEach((media_id) => {
-            //     const values = [media_id];
-            //     client.execute(deleteQuery, values, function (err, result) {
-            //         if (err) {
-            //             console.log('Error deleting media ' + media_id);
-            //         }
-            //         // else {
-            //         //     console.log('Deleting media ' + media_id);
-            //         // }
-            //     });
-            // });
         }
 
         // Subtract deleted question's score from asker's reputation
@@ -259,15 +242,6 @@ questions.route('/:id').all(function (req, res, next) {
                         }
                     });
 
-                    // const values = [media_id];
-                    // client.execute(deleteQuery, values, function (err, result) {
-                    //     if (err) {
-                    //         console.log('Error deleting media ' + media_id);
-                    //     }
-                    //     // else {
-                    //     //     console.log('Deleting media ' + media_id);
-                    //     // }
-                    // });
                 }
 
                 // Find question answerer
@@ -293,19 +267,13 @@ questions.route('/:id').all(function (req, res, next) {
 
 // Endpoint: /questions/{id}/answers
 questions.route('/:id/answers').all(function (req, res, next) {
-    // console.log('/questions/{id}/answers');
-    // console.log('id: ' + req.params.id);
-
     if (!req.params.id || !validator.isMongoId(req.params.id)) {
-        // console.log('Bad input on /questions/{id}/answers');
         return res.status(400).json(utils.errorJSON('Bad input'));
     }
 
     next();
 })
     .get(function (req, res) {
-        // console.log('GET to /questions/{id}/answers');
-
         Question.findById(req.params.id)
             .populate('answers')
             .exec()
@@ -318,19 +286,13 @@ questions.route('/:id/answers').all(function (req, res, next) {
 
 // Endpoint: /questions/{id}/upvote
 questions.route('/:id/upvote').all(function (req, res, next) {
-    // console.log('/questions/{id}/upvote');
-    // console.log('id: ' + req.params.id);
-
     if (!req.params.id || !validator.isMongoId(req.params.id)) {
-        // console.log('Bad input on /questions/:id/upvote');
         return res.status(400).json(utils.errorJSON());
     }
 
     next();
 })
     .post(async function (req, res) {
-        // console.log('POST to /questions/{id}/upvote');
-
         let upvote = req.body.upvote;
         const cookieID = req.cookies.cookieID;
 
@@ -421,16 +383,6 @@ questions.route('/:id/upvote').all(function (req, res, next) {
                                 waive_penalty: waive_penalty
                             });
                         }
-                        // question.save(function (err) {
-                        //     if (err) {
-                        //         console.log('err saving question = ' + err);
-                        //     }
-                        // });
-                        // user.save(function (err) {
-                        //     if (err) {
-                        //         console.log('err saving user = ' + err);
-                        //     }
-                        // });
                         question.save();
                         user.save();
                     }).catch(err => {
@@ -446,9 +398,6 @@ questions.route('/:id/upvote').all(function (req, res, next) {
 
 // Endpoint: /questions/{id}/answers/add
 questions.route('/:id/answers/add').all(function (req, res, next) {
-    // console.log('/questions/{id}/answers/add');
-    // console.log('id: ' + req.params.id);
-
     if (!req.params.id || !validator.isMongoId(req.params.id)) {
         // console.log('Bad input on /questions/{id}/answers/add');
         return res.status(400).json(utils.errorJSON('Bad input'));
@@ -457,12 +406,9 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
     next();
 })
     .post(async function (req, res) {
-        // console.log('POST to /questions/{id}/answers/add');
-        console.log('addans_cookieID = ' + req.cookies.cookieID);
         if (!req.cookies.cookieID) {
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
-
 
         const body = req.body.body;
         const media = req.body.media;
@@ -483,7 +429,6 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
         }).exec();
 
         if (!question) {
-            // console.log('Question not found / user already answered with id: ' + req.params.id);
             return res.status(404).json(utils.errorJSON('Question not found / user already answered with id: ' + req.params.id));
         }
 

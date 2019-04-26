@@ -19,30 +19,11 @@ addmedia.post('/', upload.single('content'), function (req, res) {
         console.log('No media file');
         return res.status(400).json(utils.errorJSON('No media file'));
     }
-    // console.log('addmedia_cookieID = ' + req.cookies.cookieID);
+
     if (!req.cookies.cookieID) {
         console.log('addmedia: pls log in');
         return res.status(400).json(utils.errorJSON('Please log in or verify'));
     }
-    // console.log('addmedia_verified = ' + req.cookies.verified);
-    // if (!utils.ensureUserVerified(req, res)) {
-    //     return res.status(400).json(utils.errorJSON('addmedia_ensureUserVerified failed'));
-    // }
-
-    // if (!req.cookies.cookieID) {
-    //     console.log('addMedia: Not logged in');
-    //     return res.status(400).json(utils.errorJSON('Not logged in'));
-    // }
-
-    // if (!req.cookies.verified) {
-    //     console.log('addmedia: Please verify');
-    //     return res.status(400).json(utils.errorJSON('Please verify'));
-    // }
-    // const verified = await utils.ensureUserVerified(res, req);
-    // if (!verified) {
-    //     console.log('addmedia_ensureUserVerified failed');
-    //     return res.status(400).json(utils.errorJSON('addmedia_ensureUserVerified failed'));
-    // }
 
     const id = mongoose.Types.ObjectId().toString();
     const insertQuery = 'INSERT INTO media (id, userId, content, mimetype, used) VALUES(?,?,?,?,?);';
@@ -54,7 +35,6 @@ addmedia.post('/', upload.single('content'), function (req, res) {
             return res.status(400).json(utils.errorJSON(err));
         }
         else {
-            // console.log('result = ' + result);
             return res.json(utils.okJSON('id', id));
         }
     });
