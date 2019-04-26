@@ -17,8 +17,6 @@ async function checkValidMedia(media, res, item, userid) {
         var tagValues = JSON.stringify(media).replace(/\[/g, '(').replace(/]/g, ')').replace(/"/g, "'");
 
         const selectQuery = 'SELECT used, userid FROM media WHERE id IN ' + tagValues;
-        // const selectQuery = 'SELECT used, userId FROM media WHERE id IN ?';
-        // const values = [media];
         const selectResult = await client.execute(selectQuery);
         if (!selectResult.rows[0]) {
             console.log('no media found');
@@ -38,16 +36,6 @@ async function checkValidMedia(media, res, item, userid) {
         }
         const updateQuery = 'UPDATE media SET used = True WHERE id IN ' + tagValues;
         client.execute(updateQuery);
-        // If all media ids aren't used and exist
-        // for (let i = 0; i < media.length; i++) {
-        //     const values = [true, media[i]];
-        //     // Set media to used
-        //     client.execute(updateQuery, values, function (err, result) {
-        //         if (err) {
-        //             console.log('There was an error setting used to true.');
-        //         }
-        //     });
-        // }
     }
     return true;
 }
@@ -419,7 +407,7 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
         if (!req.cookies.cookieID) {
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
-
+        console.log('POST on q ans add');
         const body = req.body.body;
         const media = req.body.media;
         const user_id = req.cookies.cookieID;
