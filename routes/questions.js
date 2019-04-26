@@ -386,10 +386,11 @@ questions.route('/:id/upvote').all(function (req, res, next) {
                                 waive_penalty: waive_penalty
                             });
                         }
+                        user.save();
                         console.log('awaiting q save()');
                         await question.save();
-                        console.log('awaiting u save()');
-                        await user.save();
+                        // console.log('awaiting u save()');
+                        // await 
 
                         return res.json(utils.okJSON());
 
