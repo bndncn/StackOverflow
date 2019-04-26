@@ -136,7 +136,7 @@ answers.route('/:id/accept').all(function (req, res, next) {
             .exec()
             .then(answer => {
                 if (!answer || answer.is_accepted) {
-                    return res.status(400).json(utils.errorJSON());
+                    return res.status(400).json(utils.errorJSON('missing ans or already accepted'));
                 }
 
                 Question.findById(answer.question_id)
@@ -144,11 +144,11 @@ answers.route('/:id/accept').all(function (req, res, next) {
                     .then(question => {
                         // Should only succeed if logged in user is original asker of associated 
                         if (!question || question.user_id.toString() !== req.cookies.user.cookieID) {
-                            return res.status(400).json(utils.errorJSON());
+                            return res.status(400).json(utils.errorJSON('missing q or ids dont match'));
                         }
                         // failsafe that can probably be removed because of above check in Answer query
                         if (question.accepted_answer_id != null) {
-                            return res.status(400).json(utils.errorJSON());
+                            return res.status(400).json(utils.errorJSON('answer already accepted'));
                         }
                         User.findByIdAndUpdate(answer.user_id, {
                             $inc: {
@@ -158,7 +158,7 @@ answers.route('/:id/accept').all(function (req, res, next) {
                             .exec(function (err) {
                                 if (err) {
                                     console.log('err updating rep of user on accept');
-                                    return res.status(400).json(utils.errorJSON());
+                                    return res.status(400).json(utils.errorJSON('err updating rep of user on accept'));
                                 }
                             });
                         res.json(utils.okJSON());
@@ -171,12 +171,12 @@ answers.route('/:id/accept').all(function (req, res, next) {
                     })
                     .catch(err => {
                         console.log('err find answer by id = ' + err);
-                        return res.status(400).json(utils.errorJSON());
+                        return res.status(400).json(utils.errorJSON(err));
                     });
             })
             .catch(err => {
                 console.log('err find question by id = ' + err);
-                return res.status(400).json(utils.errorJSON());
+                return res.status(400).json(utils.errorJSON(err));
             });
     });
 
