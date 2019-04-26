@@ -24,7 +24,7 @@ async function checkValidMedia(media, res, item, userid) {
             console.log('no media found');
             return false;
         }
-        for (let i = 0; i < selectResult.length; i++) {
+        for (let i = 0; i < selectResult.rows.length; i++) {
             if (selectResult.rows[i].used) {
                 console.log('media already used i = %d', i);
                 return false;
