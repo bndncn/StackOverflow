@@ -63,14 +63,14 @@ questions.route('/add').all(function (req, res, next) {
             return res.status(400).json(utils.errorJSON('Bad input on /questions/add'));
         }
 
-        if (!req.cookies.cookieID) {
+        if (!req.cookies.user.cookieID) {
             console.log('addquestion: pls log in or verify');
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
         const title = req.body.title;
         const body = req.body.body;
         const tags = req.body.tags;
-        const user_id = req.cookies.cookieID;
+        const user_id = req.cookies.user.cookieID;
         const media = req.body.media;
         const timestamp = utils.getTimeStamp();
         const id = mongoose.Types.ObjectId();
@@ -125,7 +125,7 @@ questions.route('/:id').all(function (req, res, next) {
             return res.status(404).json(utils.errorJSON('Question not found'));
         }
 
-        const cookieID = req.cookies.cookieID;
+        const cookieID = req.cookies.user.cookieID;
         const clientIP = req.ip;
 
         // not a fan of this at all, for sure will refactor this whole function to a real query
@@ -184,7 +184,7 @@ questions.route('/:id').all(function (req, res, next) {
     .delete(async function (req, res) {
         // console.log('DELETE to /questions/{id}');
 
-        const user_id = req.cookies.cookieID;
+        const user_id = req.cookies.user.cookieID;
         const question = await Question.findOne({
             _id: req.params.id,
             user_id
@@ -283,7 +283,7 @@ questions.route('/:id/upvote').all(function (req, res, next) {
 })
     .post(async function (req, res) {
         let upvote = req.body.upvote;
-        const cookieID = req.cookies.cookieID;
+        const cookieID = req.cookies.user.cookieID;
 
         if (upvote === undefined) {
             upvote = true;
@@ -404,32 +404,15 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
     next();
 })
     .post(async function (req, res) {
-        if (!req.cookies.cookieID) {
+        if (!req.cookies.user.cookieID) {
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
-        console.log('POST on q ans add');
+        console.log('--POST on q ans add--');
         const body = req.body.body;
         const media = req.body.media;
-        const user_id = req.cookies.cookieID;
-        const userResult = await User.findById(user_id).lean().exec();
-        if (!userResult) {
-            return res.status(400).json(utils.errorJSON('Not logged in'));
-        }
-
-        const username = userResult.username;
-
-
-        const question = await Question.findOne({
-            _id: req.params.id,
-            answers_user_ids: {
-                $ne: user_id
-            }
-        }).exec();
-
-        if (!question) {
-            return res.status(404).json(utils.errorJSON('Question not found / user already answered with id: ' + req.params.id));
-        }
-
+        const user_id = req.cookies.user.cookieID;
+        const username = req.cookies.user.username;
+        console.log(username);
         const timestamp = utils.getTimeStamp();
         const id = mongoose.Types.ObjectId();
 
@@ -450,19 +433,52 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             console.log('invalid media!');
             return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
         }
-        res.json(utils.okJSON('id', id));
 
         const data = new Answer(answer);
-        data.save();
 
-        question.answers.push(id);
-        question.answers_user_ids.push(user_id);
-        question.save();
+        Question.findOneAndUpdate({
+            _id: req.params.id,
+            answers_user_ids: {
+                $ne: user_id
+            }
+        },
+            {
+                $push: {
+                    answers: id,
+                    answers_user_ids: user_id
+                }
+            })
+            .exec()
+            .then(() => {
+                res.json(utils.okJSON('id', id));
 
-        const user = await User.findById(user_id).exec();
+                data.save();
+                User.findByIdAndUpdate(
+                    req.params.id,
+                    {
+                        $push: {
+                            answers: id,
+                        }
+                    }, function (err) {
+                        if (err) {
+                            console.log('err updating user with answer ' + err);
+                        }
+                    });
+            }).catch(err => {
+                console.log('err updating q with answer ' + err);
+                return res.status(404).json(utils.errorJSON('Question 404 / user already answered'));
+            });
 
-        user.answers.push(id);
-        user.save();
+
+        // if (!question) {
+        // return res.status(404).json(utils.errorJSON('Question not found / user already answered with id: ' + req.params.id));
+        // }
+
+
+        // const user = await User.findById(user_id).exec();
+
+        // user.answers.push(id);
+        // user.save();    
 
     });
 

@@ -31,8 +31,11 @@ login.post('/', async function (req, res) {
         if (!usernameResult.verified) {
             return res.status(400).json(utils.errorJSON('Please verify your account'));
         }
-
-        res.cookie('cookieID', usernameResult._id);
+        const user = {
+            cookieID: usernameResult._id,
+            username: usernameResult.username
+        };
+        res.cookie('user', user);
         return res.json(utils.okJSON());
     }
     else {

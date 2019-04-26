@@ -47,7 +47,7 @@ adduser.post('/', async function (req, res) {
         questions: [],
         answers: []
     };
-    
+
     const data = new User(user);
     data.save();
 });

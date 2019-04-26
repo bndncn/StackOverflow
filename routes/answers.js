@@ -19,12 +19,12 @@ answers.route('/:id/upvote').all(function (req, res, next) {
 })
     .post(async function (req, res) {
         console.log('POST to /answers/{id}/upvote');
-        if (!req.cookies.cookieID) {
+        if (!req.cookies.user.cookieID) {
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
 
         let upvote = req.body.upvote;
-        const cookieID = req.cookies.cookieID;
+        const cookieID = req.cookies.user.cookieID;
 
         if (upvote === undefined) {
             upvote = true;
@@ -139,7 +139,7 @@ answers.route('/:id/accept').all(function (req, res, next) {
                     .exec()
                     .then(question => {
                         // Should only succeed if logged in user is original asker of associated 
-                        if (question.user_id.toString() !== req.cookies.cookieID) {
+                        if (question.user_id.toString() !== req.cookies.user.cookieID) {
                             return res.status(400).json(utils.errorJSON());
                         }
                         // failsafe that can probably be removed because of above check in Answer query

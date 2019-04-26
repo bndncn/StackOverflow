@@ -8,19 +8,19 @@ const logout = express.Router();
 logout.post('/', async function (req, res) {
     console.log('\n\nPOST on logout');
 
-    if (!req.cookies || !req.cookies.cookieID) {
+    if (!req.cookies || !req.cookies.user.cookieID) {
         console.log('No cookies on logout');
         return res.status(400).json(utils.errorJSON('Missing cookies'));
     }
 
-    const sessionResult = await User.findById(req.cookies.cookieID).exec();
+    const sessionResult = await User.findById(req.cookies.user.cookieID).exec();
 
     if (!sessionResult) {
         console.log('User with this sessionID does not exist.');
         return res.status(400).json(utils.errorJSON('User with this sessionID does not exist.'));
     }
-    
-    res.clearCookie('cookieID');
+
+    res.clearCookie('user');
     return res.json(utils.okJSON());
 });
 

@@ -20,14 +20,14 @@ addmedia.post('/', upload.single('content'), function (req, res) {
         return res.status(400).json(utils.errorJSON('No media file'));
     }
 
-    if (!req.cookies.cookieID) {
+    if (!req.cookies.user.cookieID) {
         console.log('addmedia: pls log in');
         return res.status(400).json(utils.errorJSON('Please log in or verify'));
     }
 
     const id = mongoose.Types.ObjectId().toString();
     const insertQuery = 'INSERT INTO media (id, userId, content, mimetype, used) VALUES(?,?,?,?,?);';
-    const values = [id, req.cookies.cookieID, req.file.buffer, req.file.mimetype, false];
+    const values = [id, req.cookies.user.cookieID, req.file.buffer, req.file.mimetype, false];
 
     client.execute(insertQuery, values, { prepare: true }, function (err, result) {
         if (err) {
