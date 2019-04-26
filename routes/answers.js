@@ -135,7 +135,7 @@ answers.route('/:id/accept').all(function (req, res, next) {
         Answer.findById(req.params.id)
             .exec()
             .then(answer => {
-                if (answer.is_accepted) {
+                if (!answer || answer.is_accepted) {
                     return res.status(400).json(utils.errorJSON());
                 }
 
@@ -143,7 +143,7 @@ answers.route('/:id/accept').all(function (req, res, next) {
                     .exec()
                     .then(question => {
                         // Should only succeed if logged in user is original asker of associated 
-                        if (question.user_id.toString() !== req.cookies.user.cookieID) {
+                        if (!question || question.user_id.toString() !== req.cookies.user.cookieID) {
                             return res.status(400).json(utils.errorJSON());
                         }
                         // failsafe that can probably be removed because of above check in Answer query

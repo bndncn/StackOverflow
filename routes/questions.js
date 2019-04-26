@@ -276,6 +276,9 @@ questions.route('/:id/answers').all(function (req, res, next) {
             .populate('answers')
             .exec()
             .then(questions => {
+                if (!questions) {
+                    return res.status(404).json(utils.errorJSON('answers missing'));
+                }
                 res.json(utils.okJSON('answers', questions.answers));
             }).catch(err => {
                 res.status(404).json(utils.errorJSON(err));
