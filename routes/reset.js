@@ -1,4 +1,7 @@
 const express = require('express');
+const cassandra = require('cassandra-driver');
+const client = new cassandra.Client({ contactPoints: ['cassandra'], localDataCenter: 'datacenter1', keyspace: 'stackoverflow' });
+
 const User = require('../models/user');
 const Question = require('../models/question');
 const Answer = require('../models/answer');
@@ -31,6 +34,8 @@ reset.get('/', async function (req, res) {
             console.log('res removing answers ' + res);
         }
     });
+
+    client.execute('TRUNCATE media');
     return res.json(utils.okJSON());
 });
 
