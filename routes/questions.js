@@ -337,8 +337,9 @@ questions.route('/:id/upvote').all(function (req, res, next) {
                             score_delta = new_vote_type == true ? 2 : 1;
 
                             // dont over incr reputation from upvoting a previously waived downvote
-                            if (score_delta === 2 && existing_vote.waive_penalty) {
+                            if (existing_vote.waive_penalty) {
                                 rep_delta--;
+                                console.log('waive penalty reduces rep_delta to %d', rep_delta);
                             }
                             else {
                                 rep_delta = score_delta;
@@ -384,7 +385,7 @@ questions.route('/:id/upvote').all(function (req, res, next) {
                         }
                         question.save();
                         user.save();
-                        
+
                         return res.json(utils.okJSON());
 
                     }).catch(err => {
