@@ -21,7 +21,7 @@ var questionSchema = new Schema({
         type: Map,
         of: {
             vote_type: Boolean,
-            waive_penalty: Boolean
+            waive_penalty: Number
         }
     }
 },

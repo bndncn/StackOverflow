@@ -329,37 +329,39 @@ questions.route('/:id/upvote').all(function (req, res, next) {
                         if (existing_vote == undefined) {
                             score_delta = new_vote_type == true ? 1 : -1;
                             console.log('new vote with val = %d', score_delta);
-                            rep_delta = score_delta;
+                            // rep_delta = score_delta;
                         }
                         else if (existing_vote.vote_type == false) {
                             console.log('previous downvote');
                             // previous downvote
                             score_delta = new_vote_type == true ? 2 : 1;
-                            rep_delta = score_delta;
+                            // rep_delta = score_delta;
 
                             // dont over incr reputation from upvoting a previously waived downvote
-                            if (existing_vote.waive_penalty) {
-                                rep_delta--;
-                                console.log('waive penalty reduces rep_delta to %d', rep_delta);
-                            }
+                            // if (existing_vote.waive_penalty) {
+                            // rep_delta -= existing_vote.waive_penalty;
+                            // console.log('waive penalty reduces rep_delta to %d', rep_delta);
+                            // }
                         }
                         else {
                             console.log('previous upvote');
                             // previous upvote
                             score_delta = new_vote_type == true ? -1 : -2;
-                            rep_delta = score_delta;
+                            // rep_delta = score_delta;
                         }
+                        rep_delta = score_delta;
                         console.log('score_delta = %d old_score = %d', score_delta, question.score);
                         question.score += score_delta;
 
-                        console.log('rep_delta = %d old_rep = %d', rep_delta, user.reputation);
-                        updated_reputation = user.reputation + rep_delta;
+                        console.log('rep_delta = %d old_rep = %d waive_penalty = %d', rep_delta, user.reputation, existing_vote.waive_penalty);
+                        updated_reputation = user.reputation + rep_delta - existing_vote.waive_penalty;
 
                         // downvotes that would reduce rep below 1 must be later waived when undone
-                        let waive_penalty = false;
+                        let waive_penalty = 0;
                         if (updated_reputation < 1) {
                             console.log('updated_rep below 1: = %d', updated_reputation);
-                            waive_penalty = true;
+                            waive_penalty = 1 - updated_reputation;
+                            console.log('new waive penalty = %d', waive_penalty);
                             user.reputation = 1;
                         }
                         else {
