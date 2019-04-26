@@ -325,6 +325,7 @@ questions.route('/:id/upvote').all(function (req, res, next) {
                         let rep_delta;
                         let updated_reputation;
 
+                        let waive_penalty = 0;
                         // if a new vote
                         if (existing_vote == undefined) {
                             score_delta = new_vote_type == true ? 1 : -1;
@@ -342,22 +343,24 @@ questions.route('/:id/upvote').all(function (req, res, next) {
                             // rep_delta -= existing_vote.waive_penalty;
                             // console.log('waive penalty reduces rep_delta to %d', rep_delta);
                             // }
+                            waive_penalty = existing_vote.waive_penalty;
                         }
                         else {
                             console.log('previous upvote');
                             // previous upvote
                             score_delta = new_vote_type == true ? -1 : -2;
                             // rep_delta = score_delta;
+                            waive_penalty = existing_vote.waive_penalty;
                         }
                         rep_delta = score_delta;
-                        console.log('score_delta = %d old_score = %d', score_delta, question.score);
+                        console.log('score_delta = %d, old_score = %d', score_delta, question.score);
                         question.score += score_delta;
 
-                        console.log('rep_delta = %d old_rep = %d waive_penalty = %d', rep_delta, user.reputation, existing_vote.waive_penalty);
-                        updated_reputation = user.reputation + rep_delta - existing_vote.waive_penalty;
+                        console.log('rep_delta = %d, old_rep = %d, waive_penalty = %d', rep_delta, user.reputation, waive_penalty);
+                        updated_reputation = user.reputation + rep_delta - waive_penalty;
 
                         // downvotes that would reduce rep below 1 must be later waived when undone
-                        let waive_penalty = 0;
+                        waive_penalty = 0;
                         if (updated_reputation < 1) {
                             console.log('updated_rep below 1: = %d', updated_reputation);
                             waive_penalty = 1 - updated_reputation;
