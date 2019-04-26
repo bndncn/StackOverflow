@@ -143,7 +143,7 @@ answers.route('/:id/accept').all(function (req, res, next) {
                     .exec()
                     .then(question => {
                         // Should only succeed if logged in user is original asker of associated 
-                        if (!question || question.user_id.toString() !== req.cookies.user.cookieID) {
+                        if (!question || question.user_id !== req.cookies.user.cookieID) {
                             return res.status(400).json(utils.errorJSON('missing q or ids dont match'));
                         }
                         // failsafe that can probably be removed because of above check in Answer query
