@@ -313,7 +313,7 @@ questions.route('/:id/upvote').all(function (req, res, next) {
 
                 User.findById(question.user_id)
                     .exec()
-                    .then(user => {
+                    .then(async user => {
                         if (!user) {
                             return res.status(404).json(utils.errorJSON());
                         }
