@@ -441,6 +441,7 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             is_accepted: false,
             timestamp: timestamp,
             media: [],
+            question_id: mongoose.Types.ObjectId(req.params.id),
             vote_user_ids: {}
         };
 
