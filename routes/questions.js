@@ -14,21 +14,20 @@ const questions = express.Router();
 
 async function checkValidMedia(media, res, item, userid) {
     if (media) {
-        const selectQuery = 'SELECT used, userId FROM media WHERE id=?';
-        for (let i = 0; i < media.length; i++) {
-            const values = [media[i]];
-
-            const selectResult = await client.execute(selectQuery, values);
-
-            if (!selectResult.rows[0]) {
-                console.log('no media found');
+        const selectQuery = 'SELECT used, userId FROM media WHERE id IN ?';
+        const values = [media];
+        const selectResult = await client.execute(selectQuery, values);
+        if (!selectResult.rows[0]) {
+            console.log('no media found');
+            return false;
+        }
+        for (let i = 0; i < selectResult.length; i++) {
+            if (selectResult.rows[i].used) {
+                console.log('media already used i = %d', i);
                 return false;
             }
-            if (selectResult.rows[0].used) {
-                console.log('media already used');
-                return false;
-            }
-            if (selectResult.rows[0].userid != userid) {
+            if (selectResult.rows[i].userid != userid) {
+                console.log('media used_ids dont match i = %d', i);
                 return false;
             }
 

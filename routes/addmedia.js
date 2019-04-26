@@ -13,7 +13,7 @@ const upload = multer({ storage: storage });
 
 // Endpoint: /addmedia
 addmedia.post('/', upload.single('content'), function (req, res) {
-    console.log('\nAdding media file');
+    // console.log('\nAdding media file');
 
     if (!req.file) {
         console.log('No media file');
