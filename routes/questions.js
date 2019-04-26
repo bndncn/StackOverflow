@@ -14,9 +14,12 @@ const questions = express.Router();
 
 async function checkValidMedia(media, res, item, userid) {
     if (media) {
-        const selectQuery = 'SELECT used, userId FROM media WHERE id IN ?';
-        const values = [media];
-        const selectResult = await client.execute(selectQuery, values);
+        var tagValues = JSON.stringify(media).replace(/\[/g, '(').replace(/]/g, ')').replace(/"/g, "'");
+
+        const selectQuery = 'SELECT used, userid FROM media WHERE id IN ' + tagValues;
+        // const selectQuery = 'SELECT used, userId FROM media WHERE id IN ?';
+        // const values = [media];
+        const selectResult = await client.execute(selectQuery);
         if (!selectResult.rows[0]) {
             console.log('no media found');
             return false;
@@ -30,11 +33,9 @@ async function checkValidMedia(media, res, item, userid) {
                 console.log('media used_ids dont match i = %d', i);
                 return false;
             }
-
             // Add media id to question's or answer's media list
             item.media.push(media[i]);
         }
-
         const updateQuery = 'UPDATE media SET used = ? WHERE id=?';
         // If all media ids aren't used and exist
         for (let i = 0; i < item.media.length; i++) {
