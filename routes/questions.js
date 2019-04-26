@@ -95,7 +95,7 @@ questions.route('/add').all(function (req, res, next) {
             score: 0,
             timestamp,
             view_count: 0,
-            upvote_user_ids: {},
+            vote_user_ids: {},
             answers: [],
             media: []
         };
@@ -384,7 +384,8 @@ questions.route('/:id/upvote').all(function (req, res, next) {
                         }
                         question.save();
                         user.save();
-                        res.json(utils.okJSON());
+                        
+                        return res.json(utils.okJSON());
 
                     }).catch(err => {
                         console.log('upvote err = ' + err);
@@ -445,7 +446,7 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             is_accepted: false,
             timestamp: timestamp,
             media: [],
-            upvote_user_ids: {}
+            vote_user_ids: {}
         };
 
         const valid = await checkValidMedia(media, res, answer, user_id);
