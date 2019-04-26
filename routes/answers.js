@@ -19,7 +19,7 @@ answers.route('/:id/upvote').all(function (req, res, next) {
 })
     .post(async function (req, res) {
         console.log('POST to /answers/{id}/upvote');
-        if (!req.cookies.user.cookieID) {
+        if (!req.cookies.user || !req.cookies.user.cookieID) {
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
 
@@ -128,6 +128,10 @@ answers.route('/:id/accept').all(function (req, res, next) {
     .post(function (req, res) {
         console.log('POST to /answers/{id}/accept');
 
+        if (!req.cookies.user || !req.cookies.user.cookieID) {
+            console.log('a a: pls log in');
+            return res.status(400).json(utils.errorJSON('Please log in or verify'));
+        }
         Answer.findById(req.params.id)
             .exec()
             .then(answer => {

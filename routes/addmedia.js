@@ -20,7 +20,7 @@ addmedia.post('/', upload.single('content'), function (req, res) {
         return res.status(400).json(utils.errorJSON('No media file'));
     }
 
-    if (!req.cookies.user.cookieID) {
+    if (!req.cookies.user || !req.cookies.user.cookieID) {
         console.log('addmedia: pls log in');
         return res.status(400).json(utils.errorJSON('Please log in or verify'));
     }

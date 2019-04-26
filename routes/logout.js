@@ -8,7 +8,7 @@ const logout = express.Router();
 logout.post('/', async function (req, res) {
     console.log('\n\nPOST on logout');
 
-    if (!req.cookies || !req.cookies.user.cookieID) {
+    if (!req.cookies.user || !req.cookies.user.cookieID) {
         console.log('No cookies on logout');
         return res.status(400).json(utils.errorJSON('Missing cookies'));
     }

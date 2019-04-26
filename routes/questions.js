@@ -63,7 +63,7 @@ questions.route('/add').all(function (req, res, next) {
             return res.status(400).json(utils.errorJSON('Bad input on /questions/add'));
         }
 
-        if (!req.cookies.user.cookieID) {
+        if (!req.cookies.user || !req.cookies.user.cookieID) {
             console.log('addquestion: pls log in or verify');
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
@@ -125,7 +125,13 @@ questions.route('/:id').all(function (req, res, next) {
             return res.status(404).json(utils.errorJSON('Question not found'));
         }
 
-        const cookieID = req.cookies.user.cookieID;
+        let cookieID;
+        if (!req.cookies.user || !req.cookies.user.cookieID) {
+            cookieID = undefined;
+        } else {
+            cookieID = req.cookies.user.cookieID;
+        }
+
         const clientIP = req.ip;
 
         // not a fan of this at all, for sure will refactor this whole function to a real query
@@ -183,7 +189,10 @@ questions.route('/:id').all(function (req, res, next) {
     })
     .delete(async function (req, res) {
         // console.log('DELETE to /questions/{id}');
-
+        if (!req.cookies.user || !req.cookies.user.cookieID) {
+            console.log('dq: pls log in');
+            return res.status(400).json(utils.errorJSON('Missing cookies'));
+        }
         const user_id = req.cookies.user.cookieID;
         const question = await Question.findOne({
             _id: req.params.id,
@@ -283,6 +292,10 @@ questions.route('/:id/upvote').all(function (req, res, next) {
 })
     .post(async function (req, res) {
         let upvote = req.body.upvote;
+        if (!req.cookies.user || !req.cookies.user.cookieID) {
+            console.log('No cookies on logout');
+            return res.status(400).json(utils.errorJSON('qupv: pls log in'));
+        }
         const cookieID = req.cookies.user.cookieID;
 
         if (upvote === undefined) {
@@ -404,7 +417,7 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
     next();
 })
     .post(async function (req, res) {
-        if (!req.cookies.user.cookieID) {
+        if (!req.cookies.user || !req.cookies.user.cookieID) {
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
         console.log('--POST on q ans add--');
