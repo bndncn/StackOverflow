@@ -18,12 +18,13 @@ answers.route('/:id/upvote').all(function (req, res, next) {
     next();
 })
     .post(async function (req, res) {
-        console.log('POST to /answers/{id}/upvote');
-        if (!req.cookies.user || !req.cookies.user.cookieID) {
-            return res.status(400).json(utils.errorJSON('Please log in or verify'));
-        }
+        //  console.log('POST to /answers/{id}/upvote');
 
         let upvote = req.body.upvote;
+        if (!req.cookies.user || !req.cookies.user.cookieID) {
+            console.log('No cookies on aupv');
+            return res.status(400).json(utils.errorJSON('aupv: pls log in'));
+        }
         const cookieID = req.cookies.user.cookieID;
 
         if (upvote === undefined) {
@@ -39,11 +40,10 @@ answers.route('/:id/upvote').all(function (req, res, next) {
 
                 User.findById(answer.user_id)
                     .exec()
-                    .then(user => {
+                    .then(async user => {
                         if (!user) {
                             return res.status(404).json(utils.errorJSON('user not found'));
                         }
-                        res.json(utils.okJSON());
 
                         const voter_user_id = cookieID.toString();
                         const new_vote_type = upvote;
@@ -52,64 +52,71 @@ answers.route('/:id/upvote').all(function (req, res, next) {
                         let rep_delta;
                         let updated_reputation;
 
+                        let waive_penalty = 0;
                         // if a new vote
                         if (existing_vote == undefined) {
                             score_delta = new_vote_type == true ? 1 : -1;
-                            console.log('new vote with val = %d', score_delta);
-                            rep_delta = score_delta;
+                            // console.log('new vote with val = %d', score_delta);
+                            // rep_delta = score_delta;
                         }
                         else if (existing_vote.vote_type == false) {
-                            console.log('previous downvote');
+                            // console.log('previous downvote');
                             // previous downvote
                             score_delta = new_vote_type == true ? 2 : 1;
-                            rep_delta = score_delta;
+                            // rep_delta = score_delta;
 
                             // dont over incr reputation from upvoting a previously waived downvote
-                            if (existing_vote.waive_penalty) {
-                                rep_delta--;
-                                console.log('waive penalty reduces rep_delta to %d', rep_delta);
-                            }
+                            // if (existing_vote.waive_penalty) {
+                            // rep_delta -= existing_vote.waive_penalty;
+                            // console.log('waive penalty reduces rep_delta to %d', rep_delta);
+                            // }
+                            waive_penalty = existing_vote.waive_penalty;
                         }
                         else {
-                            console.log('previous upvote');
+                            // console.log('previous upvote');
                             // previous upvote
                             score_delta = new_vote_type == true ? -1 : -2;
-                            rep_delta = score_delta;
+                            // rep_delta = score_delta;
+                            waive_penalty = existing_vote.waive_penalty;
                         }
-                        console.log('score_delta = %d old_score = %d', score_delta, answer.score);
+                        rep_delta = score_delta;
+                        // console.log('score_delta = %d, old_score = %d', score_delta, question.score);
                         answer.score += score_delta;
 
-                        console.log('rep_delta = %d old_rep = %d', rep_delta, user.reputation);
-                        updated_reputation = user.reputation + rep_delta;
+                        // console.log('rep_delta = %d, old_rep = %d, waive_penalty = %d', rep_delta, user.reputation, waive_penalty);
+                        updated_reputation = user.reputation + rep_delta - waive_penalty;
 
                         // downvotes that would reduce rep below 1 must be later waived when undone
-                        let waive_penalty = false;
+                        waive_penalty = 0;
                         if (updated_reputation < 1) {
-                            console.log('updated_rep below 1: = %d', updated_reputation);
-                            waive_penalty = true;
+                            // console.log('updated_rep below 1: = %d', updated_reputation);
+                            waive_penalty = 1 - updated_reputation;
+                            // console.log('new waive penalty = %d', waive_penalty);
                             user.reputation = 1;
                         }
                         else {
                             user.reputation = updated_reputation;
                         }
-                        console.log('new user rep = %d', user.reputation);
+                        // console.log('new user rep = %d', user.reputation);
 
                         // if toggle, remove like they never voted in the first place
                         if (existing_vote != undefined && existing_vote.vote_type === new_vote_type) {
                             // this is how deleting from map works with Mongoose
                             answer.vote_user_ids.set(voter_user_id, undefined);
-                            console.log('removed vote from voter_user_id = ' + voter_user_id);
+                            // console.log('removed vote from voter_user_id = ' + voter_user_id);
                         }
                         else {
                             // either update old or insert new user_id -> vote
-                            console.log('updating vote_user_ids with vote_type= ' + new_vote_type + ' and waive_penalty = ' + waive_penalty);
+                            // console.log('updating vote_user_ids with vote_type= ' + new_vote_type + ' and waive_penalty = ' + waive_penalty);
                             answer.vote_user_ids.set(voter_user_id, {
                                 vote_type: new_vote_type,
                                 waive_penalty: waive_penalty
                             });
                         }
-                        answer.save();
                         user.save();
+                        // console.log('awaiting a save()');
+                        await answer.save();
+                        return res.json(utils.okJSON());
                     }).catch(err => {
                         console.log('upvote err = ' + err);
                         return res.status(404).json(utils.errorJSON(err));
