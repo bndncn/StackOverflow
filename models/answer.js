@@ -22,7 +22,7 @@ var answerSchema = new Schema({
     {
         toJSON: {
             transform: function (doc, ret) {
-                console.log('deleting fields from Answer');
+                // console.log('deleting fields from Answer');
                 ret.id = ret._id;
                 delete ret._id;
                 delete ret.user_id;

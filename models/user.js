@@ -15,7 +15,7 @@ var UserSchema = new Schema({
     {
         toJSON: {
             transform: function (doc, ret) {
-                console.log('deleting fields from User');
+                // console.log('deleting fields from User');
                 delete ret._id;
                 delete ret.username;
                 delete ret.hash;

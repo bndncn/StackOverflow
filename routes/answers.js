@@ -10,7 +10,7 @@ const answers = express.Router();
 
 // Endpoint: /answers/{id}/upvote
 answers.route('/:id/upvote').all(function (req, res, next) {
-    console.log('/answers/{id}/upvote');
+    // console.log('/answers/{id}/upvote');
     if (!req.params.id || !validator.isMongoId(req.params.id)) {
         return res.status(400).json(utils.errorJSON('missing or bad ID'));
     }
@@ -133,7 +133,7 @@ answers.route('/:id/accept').all(function (req, res, next) {
     next();
 })
     .post(function (req, res) {
-        console.log('POST to /answers/{id}/accept');
+        // console.log('POST to /answers/{id}/accept');
 
         if (!req.cookies.user || !req.cookies.user.cookieID) {
             console.log('a a: pls log in');

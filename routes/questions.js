@@ -419,12 +419,12 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
         if (!req.cookies.user || !req.cookies.user.cookieID) {
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
-        console.log('--POST on q ans add--');
+        // console.log('--POST on q ans add--');
         const body = req.body.body;
         const media = req.body.media;
         const user_id = req.cookies.user.cookieID;
         const username = req.cookies.user.username;
-        console.log(username);
+        // console.log(username);
         const timestamp = utils.getTimeStamp();
         const id = mongoose.Types.ObjectId();
 

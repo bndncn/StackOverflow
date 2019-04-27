@@ -28,7 +28,7 @@ var questionSchema = new Schema({
     {
         toJSON: {
             transform: function (doc, ret) {
-                console.log('deleting fields from Question');
+                // console.log('deleting fields from Question');
                 ret.id = ret._id;
                 ret.user = ret.user_id;
                 ret.answer_count = ret.answers.length;
