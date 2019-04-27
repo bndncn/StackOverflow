@@ -12,7 +12,7 @@ const answers = express.Router();
 answers.route('/:id/upvote').all(function (req, res, next) {
     console.log('/answers/{id}/upvote');
     if (!req.params.id || !validator.isMongoId(req.params.id)) {
-        return res.status(400).json(utils.errorJSON());
+        return res.status(400).json(utils.errorJSON('missing or bad ID'));
     }
 
     next();
@@ -34,14 +34,14 @@ answers.route('/:id/upvote').all(function (req, res, next) {
             .exec()
             .then(answer => {
                 if (!answer) {
-                    return res.status(404).json(utils.errorJSON());
+                    return res.status(404).json(utils.errorJSON('answer not found'));
                 }
 
                 User.findById(answer.user_id)
                     .exec()
                     .then(user => {
                         if (!user) {
-                            return res.status(404).json(utils.errorJSON());
+                            return res.status(404).json(utils.errorJSON('user not found'));
                         }
                         res.json(utils.okJSON());
 

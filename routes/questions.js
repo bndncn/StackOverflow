@@ -288,7 +288,7 @@ questions.route('/:id/answers').all(function (req, res, next) {
 // Endpoint: /questions/{id}/upvote
 questions.route('/:id/upvote').all(function (req, res, next) {
     if (!req.params.id || !validator.isMongoId(req.params.id)) {
-        return res.status(400).json(utils.errorJSON());
+        return res.status(400).json(utils.errorJSON('missing or bad id'));
     }
 
     next();
@@ -306,21 +306,21 @@ questions.route('/:id/upvote').all(function (req, res, next) {
         }
 
         if (!cookieID) {
-            return res.status(400).json(utils.errorJSON());
+            return res.status(400).json(utils.errorJSON('missing cookie'));
         }
 
         Question.findById(req.params.id)
             .exec()
             .then(question => {
                 if (!question) {
-                    return res.status(404).json(utils.errorJSON());
+                    return res.status(404).json(utils.errorJSON('question not found'));
                 }
 
                 User.findById(question.user_id)
                     .exec()
                     .then(async user => {
                         if (!user) {
-                            return res.status(404).json(utils.errorJSON());
+                            return res.status(404).json(utils.errorJSON('user not found'));
                         }
 
                         const voter_user_id = cookieID.toString();
@@ -401,12 +401,12 @@ questions.route('/:id/upvote').all(function (req, res, next) {
 
                     }).catch(err => {
                         console.log('upvote err = ' + err);
-                        return res.status(404).json(utils.errorJSON());
+                        return res.status(404).json(utils.errorJSON(err));
                     });
 
             }).catch(err => {
                 console.log('upvote err = ' + err);
-                return res.status(404).json(utils.errorJSON());
+                return res.status(404).json(utils.errorJSON(err));
             });
     });
 

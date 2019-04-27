@@ -24,7 +24,7 @@ user.route('/:username').all(function (req, res, next) {
         const user = await User.findOne({ username }).exec();
 
         if (!user) {
-            return res.status(404).json(utils.errorJSON());
+            return res.status(404).json(utils.errorJSON('user not found'));
         }
         else {
             return res.json(utils.okJSON('user', user));
@@ -41,7 +41,7 @@ user.route('/:username/questions').all(function (req, res, next) {
         const user = await User.findOne({ username }).exec();
 
         if (!user) {
-            return res.status(404).json(utils.errorJSON());
+            return res.status(404).json(utils.errorJSON('user not found'));
         }
         else {
             return res.json(utils.okJSON('questions', user.questions));
@@ -59,7 +59,7 @@ user.route('/:username/answers').all(function (req, res, next) {
         const user = await User.findOne({ username }).exec();
 
         if (!user) {
-            return res.status(404).json(utils.errorJSON());
+            return res.status(404).json(utils.errorJSON('user not found'));
         }
         else {
             return res.json(utils.okJSON('answers', user.answers));
