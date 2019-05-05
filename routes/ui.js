@@ -3,9 +3,16 @@ const ui = express.Router();
 
 // Endpoint: Homepage
 ui.get('/', function (req, res) {
-    res.render('pages/index', {
-        username: req.cookies.user.username
-    });
+    if (!req.cookies || !req.cookies.user) {
+        res.render('pages/index', {
+            username: false
+        });
+    }
+    else {
+        res.render('pages/index', {
+            username: req.cookies.user.username
+        });
+    }
 });
 
 ui.get('/controllers/form_controller.js', function (req, res) {
