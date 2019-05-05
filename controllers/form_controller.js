@@ -29,8 +29,8 @@ $(document).ready(function() {
             error: function(xhr) {
                 alert('Account credentials already used');
             }
-
         });
+        $('#signupModal').modal('hide');
     });
 
     $('#login').submit(function (ev) {
@@ -42,13 +42,23 @@ $(document).ready(function() {
             
             success: function(response) {
                 alert('Login was successful');
+                $.ajax({
+                    type: 'GET',
+                    url: '/',
+                    
+                    success: function(response) {
+                        document.open();
+                        document.write(response);
+                        document.close();
+                    }        
+                });
             },
 
             error: function(xhr) {
                 alert('Wrong login information');
             }
-
         });
+        $('#loginModal').modal('hide');
     });
     
     $('#verify').submit(function (ev) {
@@ -65,7 +75,7 @@ $(document).ready(function() {
             error: function(xhr) {
                 alert('Email is not registered or wrong key');
             }
-
         });
+        $('#verifyModal').modal('hide');
     });
 });
