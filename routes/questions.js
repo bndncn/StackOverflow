@@ -203,7 +203,6 @@ questions.route('/:id').all(function (req, res, next) {
             // console.log('Question not found / question not asked by user');
             return res.sendStatus(404);
         }
-        res.sendStatus(200);
 
         // Find question asker
         const asker = await User.findById(question.user_id).exec();
@@ -260,7 +259,7 @@ questions.route('/:id').all(function (req, res, next) {
 
         // Delete question
         Question.findByIdAndRemove(req.params.id).exec();
-
+        res.sendStatus(200);
     });
 
 // Endpoint: /questions/{id}/answers
