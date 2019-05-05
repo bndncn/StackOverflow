@@ -2,6 +2,7 @@ $(document).ready(function() {
     $('#loginbtn').css('cursor', 'pointer');
     $('#signupbtn').css('cursor', 'pointer');
     $('#verifybtn').css('cursor', 'pointer');
+    $('#logout').css('cursor', 'pointer');
 
     $('#loginbtn').click(function() {
         $('#loginModal').modal('show');
@@ -27,7 +28,7 @@ $(document).ready(function() {
             },
 
             error: function(xhr) {
-                alert('Account credentials already used');
+                alert(JSON.parse(xhr.responseText).error);
             }
         });
         $('#signupModal').modal('hide');
@@ -41,7 +42,6 @@ $(document).ready(function() {
             url: '/login',
             
             success: function(response) {
-                alert('Login was successful');
                 $.ajax({
                     type: 'GET',
                     url: '/',
@@ -55,31 +55,7 @@ $(document).ready(function() {
             },
 
             error: function(xhr) {
-                alert('Wrong login information');
-            }
-        });
-        $('#loginModal').modal('hide');
-    });
-
-    $('#logout').submit(function (ev) {
-        ev.preventDefault();
-        $.ajax({
-            type: 'POST',
-            data : $(this).serialize(),
-            url: '/logout',
-            
-            success: function(response) {
-                alert('Login was successful');
-                $.ajax({
-                    type: 'GET',
-                    url: '/',
-                    
-                    success: function(response) {
-                        document.open();
-                        document.write(response);
-                        document.close();
-                    }        
-                });
+                alert(JSON.parse(xhr.responseText).error);
             }
         });
         $('#loginModal').modal('hide');
@@ -97,9 +73,36 @@ $(document).ready(function() {
             },
 
             error: function(xhr) {
-                alert('Email is not registered or wrong key');
+                alert(JSON.parse(xhr.responseText).error);
             }
         });
         $('#verifyModal').modal('hide');
+    });
+
+    $('#logout').click(function (ev) {
+        ev.preventDefault();
+        $.ajax({
+            type: 'POST',
+            data : $(this).serialize(),
+            url: '/logout',
+            
+            success: function(response) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/',
+                    
+                    success: function(response) {
+                        document.open();
+                        document.write(response);
+                        document.close();
+                    }        
+                });
+            },
+
+            error: function(xhr) {
+                alert(JSON.parse(xhr.responseText).error);
+            }
+
+        });
     });
 });
