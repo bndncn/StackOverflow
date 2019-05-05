@@ -30,6 +30,7 @@ ui.get('/node_modules/bootstrap/dist/css/bootstrap.min.css', function (req, res)
 
 ui.get('/node_modules/popper.js/dist/umd/popper.min.js', function (req, res) {
     res.sendFile(path.resolve('node_modules/popper.js/dist/umd/popper.min.js'));
+});
 
 ui.get('/node_modules/bootstrap/dist/js/bootstrap.min.js', function (req, res) {
     res.sendFile(path.resolve('node_modules/bootstrap/dist/js/bootstrap.min.js'));
