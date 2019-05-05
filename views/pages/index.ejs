@@ -29,10 +29,10 @@
                     </ul>
                     <span class="navbar-text ml-auto">
                         <% if (username) { %>
-                            <a>
+                            <a id="user">
                                 <span class="fa fa-user col-sm-2"></span> <%= username %>
                             </a>
-                            <a href="/logout">
+                            <a id="logout">
                                 <span class="fa fa-sign-out col-sm-2"></span> Logout
                             </a>
                         <% } else { %>

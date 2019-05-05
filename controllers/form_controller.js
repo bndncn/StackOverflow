@@ -60,6 +60,30 @@ $(document).ready(function() {
         });
         $('#loginModal').modal('hide');
     });
+
+    $('#logout').submit(function (ev) {
+        ev.preventDefault();
+        $.ajax({
+            type: 'POST',
+            data : $(this).serialize(),
+            url: '/logout',
+            
+            success: function(response) {
+                alert('Login was successful');
+                $.ajax({
+                    type: 'GET',
+                    url: '/',
+                    
+                    success: function(response) {
+                        document.open();
+                        document.write(response);
+                        document.close();
+                    }        
+                });
+            }
+        });
+        $('#loginModal').modal('hide');
+    });
     
     $('#verify').submit(function (ev) {
         ev.preventDefault();
