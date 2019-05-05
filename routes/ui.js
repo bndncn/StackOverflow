@@ -16,39 +16,27 @@ ui.get('/', function (req, res) {
 });
 
 ui.get('/controllers/form_controller.js', function (req, res) {
-    res.sendFile('/controllers/form_controller.js', {
-        root: __dirname
-    });
+    res.sendFile('../../controllers/form_controller.js');
 });
 
 ui.get('/node_modules/jquery/dist/jquery.min.js', function (req, res) {
-    res.sendFile('node_modules/jquery/dist/jquery.min.js', {
-        root: __dirname
-    });
+    res.sendFile('../../node_modules/jquery/dist/jquery.min.js');
 });
 
 ui.get('/node_modules/bootstrap/dist/css/bootstrap.min.css', function (req, res) {
-    res.sendFile('node_modules/bootstrap/dist/css/bootstrap.min.css', {
-        root: __dirname
-    });
+    res.sendFile('../../node_modules/bootstrap/dist/css/bootstrap.min.css');
 });
 
 ui.get('/node_modules/popper.js/dist/umd/popper.min.js', function (req, res) {
-    res.sendFile('node_modules/popper.js/dist/umd/popper.min.js', {
-        root: __dirname
-    });
+    res.sendFile('../../node_modules/popper.js/dist/umd/popper.min.js');
 });
 
 ui.get('/node_modules/bootstrap/dist/js/bootstrap.min.js', function (req, res) {
-    res.sendFile('node_modules/bootstrap/dist/js/bootstrap.min.js', {
-        root: __dirname
-    });
+    res.sendFile('../../node_modules/bootstrap/dist/js/bootstrap.min.js');
 });
 
 ui.get('/css/styles.css', function (req, res) {
-    res.sendFile('css/styles.css', {
-        root: __dirname
-    });
+    res.sendFile('../../css/styles.css');
 });
 
 module.exports = ui;
