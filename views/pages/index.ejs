@@ -37,13 +37,13 @@
                             </a>
                         <% } else { %>
                             <a id="signupbtn">
-                                <span class="fa fa-user col-sm-2"></span> Sign Up
+                                <span class="fa fa-user col-sm-2"></span>Sign Up
                             </a>
                             <a id="loginbtn">
-                                <span class="fa fa-sign-in col-sm-2"></span> Login
+                                <span class="fa fa-sign-in col-sm-2"></span>Login
                             </a>
                             <a id="verifybtn">
-                                <span class="fa fa-check col-sm-2"></span> Verify
+                                <span class="fa fa-check col-sm-2"></span>Verify
                             </a>
                         <% } %>
                     </span>
@@ -62,7 +62,7 @@
                         </button>
                     </div>
                     <div class="modal-body text-center">
-                        <form id="signup" action="" method="post">                                   
+                        <form id="adduser" action="/adduser" method="post">                                   
                             <div>
                                 <label for="email">Email</label>
                                 <div>
@@ -104,7 +104,7 @@
                         </button>
                     </div>
                     <div class="modal-body text-center">
-                        <form id="login" action="" method="post">                                  
+                        <form id="login" action="/login" method="post">                                  
                             <div>
                                 <label for="username">Username</label>
                                 <div>
@@ -139,7 +139,7 @@
                         </button>
                     </div>
                     <div class="modal-body text-center">
-                        <form id="verify" action="" method="post">                                  
+                        <form id="verify" action="/verify" method="post">                                  
                             <div>
                                 <label for="email">Email</label>
                                 <div>
