@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 
 // Routes
-const index = require('./routes/index');
+const ui = require('./routes/ui');
 const adduser = require('./routes/adduser');
 const login = require('./routes/login');
 const logout = require('./routes/logout');
@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 app.use(cookieParser());
 
 // Set up routes
-app.use('/', index);
+app.use('/', ui);
 app.use('/adduser', adduser);
 app.use('/login', login);
 app.use('/logout', logout);

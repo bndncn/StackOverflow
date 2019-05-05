@@ -1,63 +1,59 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!-- Required meta tags always come first -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/styles.css">
+        
+        <title>Stack Overflow</title>    
     </head>
 
     <body>
-        <form id="add" action="/adduser" method="post">
-            <header>
-                <h3>Sign Up</h3>
-            </header>   
+        <nav class="navbar navbar-dark navbar-expand-sm fixed-top">
+            <div class="container">
+                
+                <!-- Collapsable Navbar for smaller screens-->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-            <div>
-                <label for="email">Email</label>
-                <div>
-                    <input type="text" id="email" name="email">
-                </div> 
-            </div>            
-            
-            <div>
-                <label for="username">Username</label>
-                <div>
-                    <input type="text" id="username" name="username">
-                </div> 
+                <div class="collapse navbar-collapse" id="Navbar">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active"><a class="nav-link" href="/"><span class="fa fa-home fa-lg"></span> Home</a></li>
+                    </ul>
+                    <span class="navbar-text">
+                        <% if (username) { %>
+                            <a>
+                                <span class="fa fa-user col-sm-2"></span> <%= username %>
+                            </a>
+                            <a id="logout">
+                                <span class="fa fa-sign-out col-sm-2"></span> Logout
+                            </a>
+                        <% } else { %>
+                            <a href="/signup">
+                                <span class="fa fa-user col-sm-2"></span> Sign Up
+                            </a>
+                            <a href="/login">
+                                <span class="fa fa-sign-in col-sm-2"></span> Login
+                            </a>
+                            <a href="/verify">
+                                <span class="fa fa-sign-in col-sm-2"></span> Verify
+                            </a>
+                        <% } %>
+                    </span>
+                </div>   
             </div>
-
-            <div>
-                <label for="password">Password</label>
-                <div>
-                    <input type="password" id="password" name="password">
-                </div> 
-            </div>
-            
-            <div>
-                <input type="submit" value="Sign Up">
-            </div>
-        </form>
-
-        <form id="login" action="" method="post">
-            <header>
-                <h3>Login</h3>
-            </header>            
-            
-            <div>
-                <label for="username">Username</label>
-                <div>
-                    <input type="text" id="username" name="username">
-                </div> 
-            </div>
-
-            <div>
-                <label for="password">Password</label>
-                <div>
-                    <input type="password" id="password" name="password">
-                </div> 
-            </div>
-            
-            <div>
-                <input type="submit" value="Login">
-            </div>
-        </form>        
+        </nav>
     </body>
-      
+    
+    <script src='../../node_modules/jquery/dist/jquery.min.js'></script>
+    <script src="../../node_modules/popper.js/dist/umd/popper.min.js"></script>
+    <script src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src='../../controllers/form_controller.js'></script> 
 </html>
