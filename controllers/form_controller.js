@@ -1,5 +1,20 @@
 $(document).ready(function() {
+    $('#loginbtn').css('cursor', 'pointer');
+    $('#signupbtn').css('cursor', 'pointer');
+    $('#verifybtn').css('cursor', 'pointer');
 
+    $('#loginbtn').click(function() {
+        $('#loginModal').modal('show');
+    });
+
+    $('#signupbtn').click(function() {
+        $('#signupModal').modal('show');
+    });
+
+    $('#verifybtn').click(function() {
+        $('#verifyModal').modal('show');
+    });
+    
     $('#adduser').submit(function (ev) {
         ev.preventDefault();
         $.ajax({
@@ -8,9 +23,7 @@ $(document).ready(function() {
             url: '/adduser',
             
             success: function(response) {
-                document.open();
-                document.write(response);
-                document.close();
+                alert('Sign up was successful');
             },
 
             error: function(xhr) {
@@ -20,27 +33,39 @@ $(document).ready(function() {
         });
     });
 
-    $('#verify').submit(function () {
+    $('#login').submit(function (ev) {
         ev.preventDefault();
-        $.ajax({
-            type: 'GET',
-            url: '/ui/verify',
-            success: function(response) {
-                $("html").html(response);
-            }
-        });
         $.ajax({
             type: 'POST',
             data : $(this).serialize(),
-            url: '/../verify',
+            url: '/login',
+            
+            success: function(response) {
+                alert('Login was successful');
+            },
+
+            error: function(xhr) {
+                alert('Wrong login information');
+            }
+
         });
     });
     
-    $('#login').submit(function () {
+    $('#verify').submit(function (ev) {
+        ev.preventDefault();
         $.ajax({
             type: 'POST',
             data : $(this).serialize(),
-            url: '/../login'
+            url: '/verify',
+            
+            success: function(response) {
+                alert('Account successfully verified');
+            },
+
+            error: function(xhr) {
+                alert('Email is not registered or wrong key');
+            }
+
         });
     });
 });
