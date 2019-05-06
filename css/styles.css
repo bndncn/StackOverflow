@@ -6,3 +6,16 @@ body {
 .navbar-dark {
     background-color: #0091EA; 
 }
+
+.modal-header {
+    background: #40C4FF;
+    color: floralwhite; 
+}
+
+.modal-header button {
+    color: floralwhite; 
+}
+
+.modal-body {
+    background: #80D8FF; 
+}
