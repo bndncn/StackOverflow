@@ -16,7 +16,7 @@ $(document).ready(function() {
         $('#verifyModal').modal('show');
     });
     
-    $('#adduser').submit(function (ev) {
+    $('#adduser').submit(function(ev) {
         ev.preventDefault();
         $.ajax({
             type: 'POST',
@@ -24,6 +24,7 @@ $(document).ready(function() {
             url: '/adduser',
             
             success: function(response) {
+                $('#signupModal').modal('hide');
                 alert('Sign up was successful');
             },
 
@@ -31,10 +32,9 @@ $(document).ready(function() {
                 alert(JSON.parse(xhr.responseText).error);
             }
         });
-        $('#signupModal').modal('hide');
     });
 
-    $('#login').submit(function (ev) {
+    $('#login').submit(function(ev) {
         ev.preventDefault();
         $.ajax({
             type: 'POST',
@@ -42,6 +42,7 @@ $(document).ready(function() {
             url: '/login',
             
             success: function(response) {
+                $('#loginModal').modal('hide');
                 $.ajax({
                     type: 'GET',
                     url: '/',
@@ -58,10 +59,9 @@ $(document).ready(function() {
                 alert(JSON.parse(xhr.responseText).error);
             }
         });
-        $('#loginModal').modal('hide');
     });
     
-    $('#verify').submit(function (ev) {
+    $('#verify').submit(function(ev) {
         ev.preventDefault();
         $.ajax({
             type: 'POST',
@@ -69,6 +69,7 @@ $(document).ready(function() {
             url: '/verify',
             
             success: function(response) {
+                $('#verifyModal').modal('hide');
                 alert('Account successfully verified');
             },
 
@@ -76,10 +77,9 @@ $(document).ready(function() {
                 alert(JSON.parse(xhr.responseText).error);
             }
         });
-        $('#verifyModal').modal('hide');
     });
 
-    $('#logout').click(function (ev) {
+    $('#logout').click(function(ev) {
         ev.preventDefault();
         $.ajax({
             type: 'POST',
