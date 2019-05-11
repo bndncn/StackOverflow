@@ -22,10 +22,9 @@ verify.post('/', async function (req, res) {
     }
 
     if (key == emailResult.key || key == 'abracadabra') {
-        res.json(utils.okJSON());
-
         emailResult.verified = true;
         emailResult.save();
+        return res.json(utils.okJSON());
     }
     else {
         return res.status(404).json(utils.errorJSON('Failed to Validate'));

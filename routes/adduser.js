@@ -34,7 +34,6 @@ adduser.post('/', async function (req, res) {
     const hash = CryptoJS.AES.encrypt(req.body.password, key);
 
     mail.emailKey(email, key);
-    res.json(utils.okJSON());
 
     const user = {
         _id: mongoose.Types.ObjectId(),
@@ -50,6 +49,7 @@ adduser.post('/', async function (req, res) {
 
     const data = new User(user);
     data.save();
+    return res.json(utils.okJSON());
 });
 
 module.exports = adduser;

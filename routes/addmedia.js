@@ -13,15 +13,11 @@ const upload = multer({ storage: storage });
 
 // Endpoint: /addmedia
 addmedia.post('/', upload.single('content'), function (req, res) {
-    // console.log('\nAdding media file');
-
     if (!req.file) {
-        console.log('No media file');
         return res.status(400).json(utils.errorJSON('No media file'));
     }
 
     if (!req.cookies.user || !req.cookies.user.cookieID) {
-        console.log('addmedia: pls log in');
         return res.status(400).json(utils.errorJSON('Please log in or verify'));
     }
 
@@ -31,7 +27,6 @@ addmedia.post('/', upload.single('content'), function (req, res) {
 
     client.execute(insertQuery, values, { prepare: true }, function (err, result) {
         if (err) {
-            console.log("error in insert media = " + err);
             return res.status(400).json(utils.errorJSON(err));
         }
         else {
