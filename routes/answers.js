@@ -10,7 +10,6 @@ const answers = express.Router();
 
 // Endpoint: /answers/{id}/upvote
 answers.route('/:id/upvote').all(function (req, res, next) {
-    // console.log('/answers/{id}/upvote');
     if (!req.params.id || !validator.isMongoId(req.params.id)) {
         return res.status(400).json(utils.errorJSON('missing or bad ID'));
     }
@@ -18,11 +17,8 @@ answers.route('/:id/upvote').all(function (req, res, next) {
     next();
 })
     .post(async function (req, res) {
-        //  console.log('POST to /answers/{id}/upvote');
-
         let upvote = req.body.upvote;
         if (!req.cookies.user || !req.cookies.user.cookieID) {
-            console.log('No cookies on aupv');
             return res.status(400).json(utils.errorJSON('aupv: pls log in'));
         }
         const cookieID = req.cookies.user.cookieID;
@@ -113,8 +109,7 @@ answers.route('/:id/upvote').all(function (req, res, next) {
                                 waive_penalty: waive_penalty
                             });
                         }
-                        user.save();
-                        // console.log('awaiting a save()');
+                        await user.save();
                         await answer.save();
                         return res.json(utils.okJSON());
                     }).catch(err => {
@@ -136,7 +131,6 @@ answers.route('/:id/accept').all(function (req, res, next) {
         // console.log('POST to /answers/{id}/accept');
 
         if (!req.cookies.user || !req.cookies.user.cookieID) {
-            console.log('a a: pls log in');
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
         Answer.findById(req.params.id)
@@ -171,13 +165,13 @@ answers.route('/:id/accept').all(function (req, res, next) {
                                     return res.status(400).json(utils.errorJSON('err updating rep of user on accept'));
                                 }
                             });
-                        res.json(utils.okJSON());
 
                         question.accepted_answer_id = answer._id;
                         answer.is_accepted = true;
 
-                        question.save();
-                        answer.save();
+                        await question.save();
+                        await answer.save();
+                        return res.json(utils.okJSON());
                     })
                     .catch(err => {
                         console.log('err find answer by id = ' + err);

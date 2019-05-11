@@ -19,16 +19,13 @@ async function checkValidMedia(media, res, item, userid) {
         const selectQuery = 'SELECT used, userid FROM media WHERE id IN ' + tagValues;
         const selectResult = await client.execute(selectQuery);
         if (!selectResult.rows[0]) {
-            console.log('no media found');
             return false;
         }
         for (let i = 0; i < selectResult.rows.length; i++) {
             if (selectResult.rows[i].used) {
-                console.log('media already used i = %d', i);
                 return false;
             }
             if (selectResult.rows[i].userid != userid) {
-                console.log('media used_ids dont match i = %d', i);
                 return false;
             }
             // Add media id to question's or answer's media list
@@ -59,12 +56,10 @@ questions.route('/add').all(function (req, res, next) {
     .post(async function (req, res) {
 
         if (!req.body || !req.body.title || !req.body.body || !req.body.tags) {
-            console.log('Bad input on /questions/add');
             return res.status(400).json(utils.errorJSON('Bad input on /questions/add'));
         }
 
         if (!req.cookies.user || !req.cookies.user.cookieID) {
-            console.log('addquestion: pls log in or verify');
             return res.status(400).json(utils.errorJSON('Please log in or verify'));
         }
         const title = req.body.title;
@@ -91,19 +86,19 @@ questions.route('/add').all(function (req, res, next) {
 
         const valid = await checkValidMedia(media, res, question, user_id.toString());
         if (!valid) {
-            console.log('addquestion: invalid media!');
             return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
         }
 
-        res.json(utils.okJSON('id', id));
 
         const data = new Question(question);
-        data.save();
+        await data.save();
 
         // Add question reference to question asker
         const usernameResult = await User.findById(user_id).exec();
         usernameResult.questions.push(id);
-        usernameResult.save();
+        await usernameResult.save();
+
+        return res.json(utils.okJSON('id', id));
     });
 
 // Endpoint: /questions/{id}
@@ -159,7 +154,7 @@ questions.route('/:id').all(function (req, res, next) {
                     else {
                         question.view_IP.push(clientIP);
                     }
-                    question.save();
+                    await question.save();
                 }
 
                 // return 1 rep if below 1
@@ -190,8 +185,7 @@ questions.route('/:id').all(function (req, res, next) {
     .delete(async function (req, res) {
         // console.log('DELETE to /questions/{id}');
         if (!req.cookies.user || !req.cookies.user.cookieID) {
-            console.log('dq: pls log in');
-            return res.status(400).json(utils.errorJSON('Missing cookies'));
+            return res.sendStatus(404);
         }
         const user_id = req.cookies.user.cookieID;
         const question = await Question.findOne({
@@ -200,7 +194,6 @@ questions.route('/:id').all(function (req, res, next) {
         }).exec();
 
         if (!question) {
-            // console.log('Question not found / question not asked by user');
             return res.sendStatus(404);
         }
 
@@ -223,7 +216,7 @@ questions.route('/:id').all(function (req, res, next) {
 
         // Delete question reference from asker's questions
         asker.questions = asker.questions.filter(e => e.toString() !== req.params.id.toString());
-        asker.save();
+        await asker.save();
 
         // For each answer: delete media, subtract score from answerer's reputation, and delete answer
         if (question.answers.length > 0) {
@@ -250,15 +243,15 @@ questions.route('/:id').all(function (req, res, next) {
                 // Delete answer reference from answerer's answers
                 answerer.answers = answerer.answers.filter(e => e.toString() !== answer_id.toString());
 
-                answerer.save();
+                await answerer.save();
 
                 // Delete answer
-                Answer.findByIdAndRemove(answer_id).exec();
+                await Answer.findByIdAndRemove(answer_id).exec();
             });
         }
 
         // Delete question
-        Question.findByIdAndRemove(req.params.id).exec();
+        await Question.findByIdAndRemove(req.params.id).exec();
         res.sendStatus(200);
     });
 
@@ -295,7 +288,6 @@ questions.route('/:id/upvote').all(function (req, res, next) {
     .post(async function (req, res) {
         let upvote = req.body.upvote;
         if (!req.cookies.user || !req.cookies.user.cookieID) {
-            console.log('No cookies on qupvote');
             return res.status(400).json(utils.errorJSON('qupv: pls log in'));
         }
         const cookieID = req.cookies.user.cookieID;
@@ -386,7 +378,7 @@ questions.route('/:id/upvote').all(function (req, res, next) {
                                 waive_penalty: waive_penalty
                             });
                         }
-                        user.save();
+                        await user.save();
                         // console.log('awaiting q save()');
                         await question.save();
                         // console.log('awaiting u save()');
@@ -395,13 +387,11 @@ questions.route('/:id/upvote').all(function (req, res, next) {
                         return res.json(utils.okJSON());
 
                     }).catch(err => {
-                        console.log('upvote err = ' + err);
-                        return res.status(404).json(utils.errorJSON(err));
+                        return res.status(404).json(utils.errorJSON());
                     });
 
             }).catch(err => {
-                console.log('upvote err = ' + err);
-                return res.status(404).json(utils.errorJSON(err));
+                return res.status(404).json(utils.errorJSON());
             });
     });
 
@@ -442,7 +432,6 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
 
         const valid = await checkValidMedia(media, res, answer, user_id);
         if (!valid) {
-            console.log('invalid media!');
             return res.status(400).json(utils.errorJSON('Media id does not exist or already in use'));
         }
 
@@ -462,10 +451,8 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             })
             .exec()
             .then(() => {
-                res.json(utils.okJSON('id', id));
-
-                data.save();
-                User.findByIdAndUpdate(
+                await data.save();
+                await User.findByIdAndUpdate(
                     req.params.id,
                     {
                         $push: {
@@ -476,6 +463,7 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
                             console.log('err updating user with answer ' + err);
                         }
                     });
+                res.json(utils.okJSON('id', id));
             }).catch(err => {
                 console.log('err updating q with answer ' + err);
                 return res.status(404).json(utils.errorJSON('Question 404 / user already answered'));
