@@ -169,8 +169,8 @@ answers.route('/:id/accept').all(function (req, res, next) {
                         question.accepted_answer_id = answer._id;
                         answer.is_accepted = true;
 
-                        await question.save();
-                        await answer.save();
+                        question.save();
+                        answer.save();
                         return res.json(utils.okJSON());
                     })
                     .catch(err => {
