@@ -451,8 +451,8 @@ questions.route('/:id/answers/add').all(function (req, res, next) {
             })
             .exec()
             .then(() => {
-                await data.save();
-                await User.findByIdAndUpdate(
+                data.save();
+                User.findByIdAndUpdate(
                     req.params.id,
                     {
                         $push: {
