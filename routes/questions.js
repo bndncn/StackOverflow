@@ -154,7 +154,7 @@ questions.route('/:id').all(function (req, res, next) {
                     else {
                         question.view_IP.push(clientIP);
                     }
-                    await question.save();
+                    question.save();
                 }
 
                 // return 1 rep if below 1
