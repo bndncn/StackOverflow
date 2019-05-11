@@ -23,7 +23,7 @@ verify.post('/', async function (req, res) {
 
     if (key == emailResult.key || key == 'abracadabra') {
         emailResult.verified = true;
-        emailResult.save();
+        await emailResult.save();
         return res.json(utils.okJSON());
     }
     else {

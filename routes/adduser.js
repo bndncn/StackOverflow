@@ -48,7 +48,7 @@ adduser.post('/', async function (req, res) {
     };
 
     const data = new User(user);
-    data.save();
+    await data.save();
     return res.json(utils.okJSON());
 });
 
