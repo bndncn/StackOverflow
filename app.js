@@ -10,8 +10,6 @@ var path = require('path');
 // create a write stream (in append mode)
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
 
-// setup the logger
-app.use(morgan('short', { stream: accessLogStream }));
 
 // Routes
 const ui = require('./routes/ui');
@@ -30,6 +28,8 @@ const reset = require('./routes/reset');
 const port = 80;
 const app = express();
 
+// setup the logger
+app.use(morgan('short', { stream: accessLogStream }));
 app.set('view engine', 'ejs');
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
