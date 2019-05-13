@@ -33,7 +33,7 @@ adduser.post('/', async function (req, res) {
     const key = crypto.randomBytes(16).toString('hex');
     const hash = CryptoJS.AES.encrypt(req.body.password, key);
 
-    mail.emailKey(email, key);
+    await mail.emailKey(email, key);
 
     const user = {
         _id: mongoose.Types.ObjectId(),
