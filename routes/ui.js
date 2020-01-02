@@ -4,13 +4,14 @@ const ui = express.Router();
 
 // Endpoint: Homepage
 ui.get('/', function (req, res) {
+    let path = req.query.currentPage ? 'partials/navbar' : 'pages/home';
     if (!req.cookies || !req.cookies.user) {
-        res.render('pages/index', {
+        res.render(path, {
             username: false
         });
     }
     else {
-        res.render('pages/index', {
+        res.render(path, {
             username: req.cookies.user.username
         });
     }

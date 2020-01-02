@@ -43,10 +43,20 @@ questions.route('/').all(function (req, res, next) {
     next();
 })
     .get(function (req, res) {
-        // console.log('GET to /questions');
+        
     })
     .post(function (req, res) {
-        // console.log('POST to /questions');
+        let username = req.cookies.user ? req.cookies.user.username : null;
+        qs = JSON.parse(req.body.questions);
+        for (let i = 0; i < qs.length; i++) {
+            let q = qs[i];
+            let d = new Date(1000 * Number(q['timestamp']))
+            q['timestamp'] = d.toString();
+        }
+        res.render('pages/questions', {
+            username,
+            questions: qs
+        });
     });
 
 // Endpoint: /questions/add

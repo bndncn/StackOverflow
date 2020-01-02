@@ -19,3 +19,33 @@ body {
 .modal-body {
     background: #80D8FF; 
 }
+
+.dropdown-menu {
+    background-color: #40C4FF;
+}
+
+.dropdown {
+    list-style:none;
+    position:relative;
+    float:left;
+}
+
+.dropdown-menu a:hover {
+    background-color: #80D8FF;
+}
+
+#card-form {
+    margin: 20px;
+}
+
+#card-form {
+    background-color: #E1F5FE;
+}
+
+#q-card {
+    background-color:rgb(250, 245, 245);
+}
+
+#q-card > h3 {
+    color: blue;
+}

@@ -2,6 +2,8 @@ $(document).ready(function() {
     $('#loginbtn').css('cursor', 'pointer');
     $('#signupbtn').css('cursor', 'pointer');
     $('#verifybtn').css('cursor', 'pointer');
+    $('#user').css('cursor', 'pointer');
+    $('#questions').css('cursor', 'pointer');
     $('#logout').css('cursor', 'pointer');
 
     $('#loginbtn').click(function() {
@@ -34,6 +36,43 @@ $(document).ready(function() {
         });
     });
 
+
+    let pages = ['home', 'questions'];
+    function getCurrentPage() {
+        let currentPage = null;
+        for (let i = 0; i < pages.length; i++) {
+            if ($('#' + pages[i]).hasClass('active')) {
+                currentPage = pages[i];
+                break;
+            }
+        }
+        if (currentPage) {
+            $.ajax({
+                type: 'GET',
+                url: '/',
+                data: {
+                    currentPage
+                },
+                
+                success: function(response) {
+                    console.log(response)   
+                    $('#navbar').html(response);
+                    $.getScript('../../controllers/form_controller.js');
+                    setActivePage(currentPage);
+                }        
+            });
+        }
+    }
+
+    function setActivePage(currentPage) {
+        for (let i = 0; i < pages.length; i++) {
+            if ($('#' + pages[i]).hasClass('active')) {
+                $('#' + pages[i]).removeClass('active');
+            }
+        }
+        $('#' + currentPage).addClass('active');
+    }
+
     $('#login').submit(function(ev) {
         ev.preventDefault();
         $.ajax({
@@ -41,18 +80,9 @@ $(document).ready(function() {
             data : $(this).serialize(),
             url: '/login',
             
-            success: function(response) {
+            success: function() {
                 $('#loginModal').modal('hide');
-                $.ajax({
-                    type: 'GET',
-                    url: '/',
-                    
-                    success: function(response) {
-                        document.open();
-                        document.write(response);
-                        document.close();
-                    }        
-                });
+                getCurrentPage();
             },
 
             error: function(xhr) {
@@ -86,21 +116,60 @@ $(document).ready(function() {
             data : $(this).serialize(),
             url: '/logout',
             
+            success: function() {
+                getCurrentPage();
+            },
+
+            error: function(xhr) {
+                alert(JSON.parse(xhr.responseText).error);
+            }
+
+        });
+    });
+
+    $('#questions').click(function(ev) {
+        ev.preventDefault();
+        $.ajax({
+            type: 'POST',
+            data : $(this).serialize(),
+            url: '/search',
+            
             success: function(response) {
                 $.ajax({
-                    type: 'GET',
-                    url: '/',
+                    type: 'POST',
+                    url: '/questions',
+                    data: {
+                        questions: JSON.stringify(response.questions)
+                    },  
                     
                     success: function(response) {
-                        document.open();
-                        document.write(response);
-                        document.close();
-                    }        
+                        $('body').html(response);
+                        setActivePage('questions');
+                    }   
                 });
             },
 
             error: function(xhr) {
                 alert(JSON.parse(xhr.responseText).error);
+            }
+
+        });
+    });
+
+    $('#q-add').submit(function(ev) {
+        ev.preventDefault();
+        $.ajax({
+            type: 'POST',
+            data : $(this).serialize(),
+            url: '/questions/add',
+            
+            success: function(response) {
+                console.log(response)
+            },
+
+            error: function(xhr) {
+                alert(JSON.parse(xhr.responseText).error);
+                $('#q-add')[0].reset();
             }
 
         });

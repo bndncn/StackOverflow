@@ -6,17 +6,19 @@
 
     <body>
         <%-include("../partials/navbar.ejs", { username })%>
-
+        
         <div class="text-center">
             <header>
                 <h1>Welcome to StackOverflow</h1>
             </header>
         </div>
 
-        <div class="mt-2 col-md-12">
-            <label for="search">Search the site:</label>
-            <input type="search" id="search" name="q">           
-            <button>Search</button>
+        <div class="text-center">
+            <form id="search" action="/search" method="post">    
+                <label for="search">Search the site:</label>
+                <input type="search" id="search" name="q">           
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
         </div>
 
     </body>   
