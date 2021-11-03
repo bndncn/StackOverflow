@@ -24,7 +24,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "sendmail": "^1.4.1",
-    "validator": "^10.11.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "eslint": "^5.15.3"
